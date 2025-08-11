@@ -27,6 +27,10 @@ jobs:
     - name: Build Nuxt project
       run: yarn build
       
+    - name: Download Node.js for Windows
+      run: |
+        curl -L -o node-win-x64.zip https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
+        
     - name: Prepare package structure
       run: |
         # 创建目标目录结构
@@ -45,6 +49,12 @@ jobs:
         else
           echo "Warning: script directory not found"
         fi
+        
+        # 解压Windows Node.js到包目录
+        unzip node-win-x64.zip -d package/AQQBot-web/
+        # 重命名Node.js目录为node-v22.18.0-win-x64
+        mv package/AQQBot-web/node-v22.18.0-win-x64 package/AQQBot-web/node-v22.18.0-win-x64-temp
+        mv package/AQQBot-web/node-v22.18.0-win-x64-temp package/AQQBot-web/node-v22.18.0-win-x64
         
         # 显示最终的目录结构
         echo "Final package structure:"
