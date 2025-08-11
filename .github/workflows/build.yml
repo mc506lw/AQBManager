@@ -59,7 +59,7 @@ jobs:
         echo "Archive size: $(du -h AQQBot-web.zip)"
         
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: AQQBot-web-package
         path: AQQBot-web.zip
