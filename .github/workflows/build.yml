@@ -1,0 +1,66 @@
+# .github/workflows/build.yml
+name: Build and Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
+        
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      
+    - name: Build Nuxt project
+      run: yarn build
+      
+    - name: Prepare package structure
+      run: |
+        # 创建目标目录结构
+        mkdir -p package/AQQBot-web
+        
+        # 复制构建输出
+        if [ -d ".output" ]; then
+          cp -r .output package/AQQBot-web/
+        else
+          echo "Warning: .output directory not found"
+        fi
+        
+        # 复制script目录下的所有文件
+        if [ -d "script" ]; then
+          cp -r script/* package/AQQBot-web/ 2>/dev/null || echo "No files to copy from script directory"
+        else
+          echo "Warning: script directory not found"
+        fi
+        
+        # 显示最终的目录结构
+        echo "Final package structure:"
+        find package -type f | sort
+        
+    - name: Create zip archive
+      run: |
+        cd package
+        zip -r ../AQQBot-web.zip AQQBot-web
+        cd ..
+        echo "Archive created successfully"
+        echo "Archive size: $(du -h AQQBot-web.zip)"
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: AQQBot-web-package
+        path: AQQBot-web.zip
+        retention-days: 30
