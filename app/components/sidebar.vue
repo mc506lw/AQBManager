@@ -38,6 +38,10 @@
             <li>
                 <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi">插件配置</NuxtLink>
             </li>
+            <li class="menu-title">实用工具</li>
+            <li>
+                <NuxtLink to="/widgets" active-class="menu-active" class="icon icon-gongnengdingyi">小工具</NuxtLink>
+            </li>
         </ul>
         <ul class="menu bg-base-200 rounded-box" v-show=!isCollapsed>
             <li>
@@ -71,6 +75,11 @@
             <li>
                 <NuxtLink to="/config" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
                     data-tip="插件配置"><i class="icon icon-peizhi"></i></NuxtLink>
+            </li>
+            <li>
+                <NuxtLink to="/widgets" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
+                    data-tip="小工具"><i class="icon icon-gongnengdingyi"></i></NuxtLink>
+
             </li>
         </ul>
         <div @click="switchAuth" class="flex items-center transition-all duration-300 ease-in-out mt-auto text-3xl bg-base-100 ml-2 mb-2 rounded-md shadow-2xl cursor-pointer"

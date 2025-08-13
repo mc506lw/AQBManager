@@ -30,9 +30,17 @@
                     <div class="mt-3">
                         <input v-if="item.type === 'boolean'" type="checkbox" class="toggle toggle-primary"
                             :checked="item.value" @change="item.value = $event.target.checked" />
-                        <input v-else-if="item.type === 'array'" type="text" class="input input-bordered w-full"
-                            :value="formatArrayValue(item.value)"
-                            @input="updateArrayValue(item, $event.target.value)" />
+                        <div v-else-if="item.type === 'array'" class="array-input-container">
+                            <div v-for="(val, idx) in item.value" :key="idx" class="flex mb-2">
+                                <input type="text" class="input input-bordered w-full" v-model="item.value[idx]" />
+                                <button class="btn btn-square btn-outline ml-2" @click="removeArrayItem(item, idx)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button class="btn btn-sm btn-outline mt-2" @click="addArrayItem(item)">添加项</button>
+                        </div>
                         <input v-else type="text" class="input input-bordered w-full" v-model="item.value" />
                     </div>
                     <div class="mt-3 flex space-x-2">
@@ -583,6 +591,21 @@ const updateArrayValue = (item, value) => {
         return;
     }
     item.value = value.split(',').map(v => v.trim()).filter(v => v);
+};
+
+// 添加数组项
+const addArrayItem = (item) => {
+    if (!Array.isArray(item.value)) {
+        item.value = [];
+    }
+    item.value.push('');
+};
+
+// 删除数组项
+const removeArrayItem = (item, index) => {
+    if (Array.isArray(item.value) && index >= 0 && index < item.value.length) {
+        item.value.splice(index, 1);
+    }
 };
 
 // 保存单个配置项

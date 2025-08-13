@@ -20,7 +20,7 @@ export default defineNuxtConfig({
         { name: 'keywords', content: 'AQQBot' }
       ],
       link: [
-        { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_ry4fix8jsrs.css' },
+        { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_gi1af6bwgm.css' },
         { rel: 'icon', type: 'image/x-icon', href: '/logo.png' },
       ]
     }

@@ -213,7 +213,6 @@ export async function sendActionToConnectedServer(uuid, action, params = null) {
                 const response = JSON.parse(data);
                 clearTimeout(timeout);
                 ws.removeListener('message', handleMessage);
-                console.log(`📥 收到服务器 ${uuid} 对动作 ${action} 的响应:`, response);
                 resolve(response); // 直接返回完整回复内容
             } catch (e) {
                 console.warn(`⚠️ 解析来自 ${uuid} 的消息失败:`, e.message);

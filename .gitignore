@@ -25,5 +25,6 @@ logs
 
 # Data
 .trae
-.server/data
+server/data
 .script
+/server/data

@@ -55,7 +55,7 @@
                         <div><span class="font-semibold">总内存:</span> {{ systemInfo.totalMemory }} MB</div>
                         <div><span class="font-semibold">空闲内存:</span> {{ systemInfo.freeMemory }} MB</div>
                         <div><span class="font-semibold">负载平均值:</span> {{ systemInfo.loadAverage ?
-                            systemInfo.loadAverage.join(', ') : 'N/A' }}</div>
+                            (systemInfo.loadAverage.every(val => val === 0) ? 'N/A' : systemInfo.loadAverage.map(val => val.toFixed(2)).join(', ')) : 'N/A' }}</div>
                         <div><span class="font-semibold">面板内存使用:</span> {{ systemInfo.panelMemoryUsage ?
                             systemInfo.panelMemoryUsage.toFixed(2) : 'N/A' }} MB
                         </div>
@@ -258,28 +258,71 @@ const updateChartData = () => {
     timeLabels.value = newTimeLabels
 
     // 添加新的数据点
-    // 安全地计算CPU使用率，避免无限递归
-    let cpuUsageValue = 0
-    if (systemInfo.value.cpuUsage && Array.isArray(systemInfo.value.cpuUsage)) {
+    // 根据新的方法计算CPU使用率
+    let cpuUsageValue = null; // 初始化为null，表示没有有效值
+    if (systemInfo.value.cpuUsage && Array.isArray(systemInfo.value.cpuUsage) && systemInfo.value.cpuUsage.length > 0) {
         try {
-            // 计算所有CPU核心的使用率总和
-            const totalUsage = systemInfo.value.cpuUsage.reduce((acc, core) => {
-                if (core && typeof core === 'object') {
-                    // 计算每个核心的总时间
-                    const totalTime = (core.user || 0) + (core.nice || 0) + (core.sys || 0) + (core.idle || 0) + (core.irq || 0);
-                    // 计算使用时间
-                    const usageTime = (core.user || 0) + (core.nice || 0) + (core.sys || 0) + (core.irq || 0);
-                    // 计算使用率百分比
-                    const usagePercent = totalTime > 0 ? (usageTime / totalTime) * 100 : 0;
-                    return acc + usagePercent;
+            // 获取当前CPU信息
+            let user = 0, nice = 0, sys = 0, idle = 0, irq = 0, total = 0;
+            systemInfo.value.cpuUsage.forEach((cpu) => {
+                user += cpu.user || 0;
+                nice += cpu.nice || 0;
+                sys += cpu.sys || 0;
+                idle += cpu.idle || 0;
+                irq += cpu.irq || 0;
+            });
+            total = user + nice + sys + idle + irq;
+
+            // 保存当前CPU信息用于下次计算
+            if (!window.previousCPUInfo) {
+                window.previousCPUInfo = { user, sys, idle, total };
+                cpuUsageValue = null; // 第一次无法计算使用率
+            } else {
+                // 计算使用率
+                const idleDiff = idle - window.previousCPUInfo.idle;
+                const totalDiff = total - window.previousCPUInfo.total;
+
+                // 增加边界条件检查，防止除零错误
+                if (totalDiff > 0) {
+                    const calculatedValue = Math.max(0, Math.min(100, (1 - idleDiff / totalDiff) * 100));
+                    // 如果计算结果为0，使用上一个数据点的值
+                    if (calculatedValue === 0 && window.lastValidCPUUsage !== undefined) {
+                        cpuUsageValue = window.lastValidCPUUsage;
+                    } else if (calculatedValue > 0) {
+                        // 只有当计算结果大于0时才更新lastValidCPUUsage
+                        cpuUsageValue = calculatedValue;
+                        window.lastValidCPUUsage = calculatedValue;
+                    } else {
+                        // 如果计算结果为0且没有上一个有效值，则保持null
+                        cpuUsageValue = null;
+                    }
+                } else {
+                    // 如果totalDiff为0，尝试使用上一个数据点的值
+                    if (window.lastValidCPUUsage !== undefined) {
+                        cpuUsageValue = window.lastValidCPUUsage;
+                    } else {
+                        cpuUsageValue = null;
+                    }
                 }
-                return acc;
-            }, 0);
-            // 计算平均CPU使用率
-            cpuUsageValue = totalUsage / systemInfo.value.cpuUsage.length;
+
+                // 更新previousCPUInfo
+                window.previousCPUInfo = { user, sys, idle, total };
+            }
         } catch (e) {
             console.warn('计算CPU使用率时出错:', e);
-            cpuUsageValue = 0;
+            // 出错时尝试使用上一个数据点的值
+            if (window.lastValidCPUUsage !== undefined) {
+                cpuUsageValue = window.lastValidCPUUsage;
+            } else {
+                cpuUsageValue = null;
+            }
+        }
+    } else {
+        // 如果没有CPU数据，尝试使用上一个数据点的值
+        if (window.lastValidCPUUsage !== undefined) {
+            cpuUsageValue = window.lastValidCPUUsage;
+        } else {
+            cpuUsageValue = null;
         }
     }
 
@@ -323,7 +366,8 @@ const fetchSystemInfo = async () => {
         if (result) {
             systemInfo.value = result
             console.log('系统信息:', result)
-
+            // 更新面板时间
+            systemInfo.value.panelTime = new Date().toLocaleString()
         }
     } catch (error) {
         console.error('获取系统信息失败:', error)

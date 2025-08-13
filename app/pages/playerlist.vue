@@ -9,7 +9,7 @@
                 <div class="ml-6 w-48 flex items-center justify-center">
                     <input type="checkbox" checked="checked" class="toggle toggle-md" v-model="onlineStatus"
                         @change="performSearch" />
-                    <P class="ml-2">仅在线玩家</P>
+                    <span class="ml-2">仅在线玩家</span>
                 </div>
                 <select class="select ml-6 mt-2 w-64" v-model="selectedServer">
                     <option value="">全部</option>
@@ -44,7 +44,7 @@
                         <th class="w-96">ID</th>
                         <th class="w-96">QQ</th>
                         <th class="w-96">服务器</th>
-                        <th class="w-96">QQ群</th>
+                        <th class="w-120">QQ群</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -211,7 +211,14 @@ const uniqueServers = computed(() => {
 
 // 计算唯一QQ群列表
 const uniqueQQGroups = computed(() => {
-    const groups = items.value.map(item => item.qq_group);
+    const groups = [];
+    items.value.forEach(item => {
+        if (item.qq_group) {
+            // 将逗号分隔的群组字符串拆分成单独的群组ID
+            const groupIds = item.qq_group.split(', ').filter(id => id.trim() !== '');
+            groups.push(...groupIds);
+        }
+    });
     return [...new Set(groups)];
 });
 
@@ -229,20 +236,22 @@ const filteredItems = computed(() => {
         }
 
         // QQ群筛选
-        if (selectedQQGroup.value && item.qq_group !== selectedQQGroup.value) {
+        if (selectedQQGroup.value && !item.qq_group.split(', ').includes(selectedQQGroup.value)) {
             return false;
         }
 
         // 搜索功能
-        if (searchText.value) {
-            const searchLower = searchText.value.toLowerCase();
-            return (
-                item.id.toLowerCase().includes(searchLower) ||
-                item.qq.toLowerCase().includes(searchLower) ||
-                item.server.toLowerCase().includes(searchLower) ||
-                item.qq_group.toLowerCase().includes(searchLower)
-            );
-        }
+            if (searchText.value) {
+                const searchLower = searchText.value.toLowerCase();
+                // 检查QQ群是否包含搜索关键词
+                const qqGroupMatch = item.qq_group.split(', ').some(group => group.toLowerCase().includes(searchLower));
+                return (
+                    item.id.toLowerCase().includes(searchLower) ||
+                    item.qq.toLowerCase().includes(searchLower) ||
+                    item.server.toLowerCase().includes(searchLower) ||
+                    qqGroupMatch
+                );
+            }
 
         return true;
     });
@@ -328,6 +337,9 @@ const getplayerlists = async () => {
     playerlists.value = [];
     items.value = [];
 
+    // 创建一个映射来跟踪已添加的玩家
+    const addedPlayers = new Map();
+
     // 遍历所有服务器
     for (const server of servers.value) {
         try {
@@ -370,7 +382,10 @@ const getplayerlists = async () => {
                         },
                     });
                     if (groupResult.success && groupResult.response && Array.isArray(groupResult.response.groups)) {
-                        // 遍历群组列表
+                        // 创建一个映射来跟踪每个QQ号出现在哪些群组中
+                        const qqGroupsMap = new Map();
+                        
+                        // 遍历群组列表，收集每个QQ号的群组信息
                         for (const group of groupResult.response.groups) {
                             try {
                                 // 获取在群组的QQ列表
@@ -387,38 +402,61 @@ const getplayerlists = async () => {
                                 });
                                 console.log(`获取到群组: ${qqListResult.msg}`);
 
-                                // 处理数据，将其转换为适合展示的格式
+                                // 处理数据
                                 if (qqListResult.success && qqListResult.response) {
-                                    // 处理玩家数据
-                                    const players = userResult.response;
                                     // 处理群组数据
                                     const groupUsers = qqListResult.response;
-
-                                    // 遍历玩家数据
-                                    for (const [qq, playerNames] of Object.entries(players)) {
-                                        // 确保playerNames是数组
-                                        const names = Array.isArray(playerNames) ? playerNames : [playerNames];
-                                        // 遍历玩家名
-                                        for (const playerName of names) {
-                                            // 检查玩家是否在线
-                                            const isOnline = onlinePlayers.includes(playerName);
-
-                                            // 创建展示项
-                                            const item = {
-                                                id: playerName,
-                                                qq: qq,
-                                                server: server.name || server.uuid,
-                                                qq_group: group, // 显示QQ群号而不是群名称
-                                                online: isOnline // 添加在线状态
-                                            };
-
-                                            // 添加到展示列表
-                                            items.value.push(item);
+                                    
+                                    // 遍历群组成员
+                                    for (const [qq, name] of Object.entries(groupUsers)) {
+                                        // 如果QQ号还没有记录，初始化一个空数组
+                                        if (!qqGroupsMap.has(qq)) {
+                                            qqGroupsMap.set(qq, []);
                                         }
+                                        // 将当前群组ID添加到该QQ号的群组列表中
+                                        qqGroupsMap.get(qq).push(group);
                                     }
                                 }
                             } catch (error) {
                                 showToastMessage(`获取群组QQ列表失败: ${error.message}`, 'error');
+                            }
+                        }
+                        
+                        // 处理玩家数据
+                        const players = userResult.response;
+                        
+                        // 遍历玩家数据
+                        for (const [qq, playerNames] of Object.entries(players)) {
+                            // 确保playerNames是数组
+                            const names = Array.isArray(playerNames) ? playerNames : [playerNames];
+                            // 遍历玩家名
+                            for (const playerName of names) {
+                                // 创建唯一标识符
+                                const playerKey = `${server.uuid}-${qq}-${playerName}`;
+                                
+                                // 检查玩家是否已经添加过
+                                if (!addedPlayers.has(playerKey)) {
+                                    // 检查玩家是否在线
+                                    const isOnline = onlinePlayers.includes(playerName);
+
+                                    // 获取该QQ号所在的群组列表
+                                    const qqGroups = qqGroupsMap.get(qq) || [];
+
+                                    // 创建展示项，将群组列表合并显示
+                                    const item = {
+                                        id: playerName,
+                                        qq: qq,
+                                        server: server.name || server.uuid,
+                                        qq_group: qqGroups.join(', '), // 以逗号分隔的群组列表
+                                        online: isOnline // 添加在线状态
+                                    };
+
+                                    // 添加到展示列表
+                                    items.value.push(item);
+                                    
+                                    // 标记玩家已添加
+                                    addedPlayers.set(playerKey, true);
+                                }
                             }
                         }
                     } else {

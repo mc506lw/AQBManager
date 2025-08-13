@@ -299,7 +299,10 @@ const refreshData = async () => {
 const calculateAllUnboundMembers = async () => {
     unboundMembers.value = [];
 
-    // 遍历所有群组
+    // 创建一个映射来跟踪每个QQ号出现在哪些群组中
+    const qqGroupsMap = new Map();
+
+    // 遍历所有群组，收集每个QQ号的群组信息
     for (const [serverUuid, serverGroups] of Object.entries(groups.value)) {
         const bound = boundUsers.value[serverUuid] || {};
         // 获取服务器名称
@@ -321,10 +324,32 @@ const calculateAllUnboundMembers = async () => {
                 }
 
                 if (!isBound) {
-                    unboundMembers.value.push({ groupId, qq, name, server: serverName, serverUuid });
+                    // 如果QQ号还没有记录，初始化一个空数组
+                    if (!qqGroupsMap.has(qq)) {
+                        qqGroupsMap.set(qq, {
+                            name: name,
+                            server: serverName,
+                            serverUuid: serverUuid,
+                            groupIds: []
+                        });
+                    }
+                    // 将当前群组ID添加到该QQ号的群组列表中
+                    qqGroupsMap.get(qq).groupIds.push(groupId);
                 }
             }
         }
+    }
+
+    // 将映射转换为unboundMembers数组
+    for (const [qq, memberInfo] of qqGroupsMap.entries()) {
+        unboundMembers.value.push({
+            qq: qq,
+            name: memberInfo.name,
+            server: memberInfo.server,
+            serverUuid: memberInfo.serverUuid,
+            groupIds: memberInfo.groupIds,
+            groupId: memberInfo.groupIds.join(', ') // 以逗号分隔的群组ID字符串
+        });
     }
 };
 

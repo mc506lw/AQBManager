@@ -1,18 +1,13 @@
 let requestCount = 0;
-let resetTimer = null;
 
 function incrementRequestCount() {
-    requestCount++;
-    // 清除之前的定时器
-    if (resetTimer) {
-        clearTimeout(resetTimer);
-    }
-    // 设置新的定时器，在5秒后清零计数器
-    resetTimer = setTimeout(() => {
-        requestCount = 0;
-        resetTimer = null;
-    }, 5000);
+    requestCount = 1; // 每次请求时重置为1
 }
+
+// 每5秒清零计数器
+setInterval(() => {
+    requestCount = 0;
+}, 5000);
 
 function getRequestCount() {
     return requestCount;
@@ -20,10 +15,6 @@ function getRequestCount() {
 
 function resetRequestCount() {
     requestCount = 0;
-    if (resetTimer) {
-        clearTimeout(resetTimer);
-        resetTimer = null;
-    }
 }
 
 module.exports = {
