@@ -1,11 +1,16 @@
 <template>
     <div class="navbar rounded-t-lg outline-1 outline-base-300 text-base-content">
         <div class="flex-1">
-            <button class="btn btn-square btn-ghost" @click="toggleSidebar">
+            <!-- Desktop sidebar toggle -->
+            <button class="btn btn-square btn-ghost hidden lg:flex" @click="toggleSidebar">
                 <i class="inline-block h-5 w-5 stroke-current icon"
                     :class="{ 'icon-shouqizhankai-shouqi': isSidebarCollapsed, 'icon-shouqizhankai-zhankai': !isSidebarCollapsed }">
                 </i>
             </button>
+            <!-- Mobile sidebar toggle -->
+            <label for="sidebar-drawer" class="btn btn-square btn-ghost lg:hidden">
+                <i class="inline-block h-5 w-5 stroke-current icon icon-shouqizhankai-zhankai"></i>
+            </label>
         </div>
         <div class="flex-none">
             <button class="btn btn-ghost swap swap-rotate" @click="toggleTheme">

@@ -1,29 +1,29 @@
 <template>
     <div class="w-full h-full">
-        <div class="flex justify-between w-full">
+        <div class="flex flex-col lg:flex-row justify-between w-full">
             <div class="mt-6 ml-6">
                 <div class="text-2xl font-bold">QQ群管理</div>
                 <div class="text-xl">管理QQ群状态</div>
             </div>
-            <div class="mr-6 mt-8">
+            <div class="mx-6 mt-8 flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4">
                 <button class="btn btn-outline" @click="refreshData">刷新状态</button>
-                <button class="btn btn-outline ml-4" @click="showDeleteGroupModal">删除QQ群</button>
-                <button class="btn btn-outline ml-4" @click="showAddGroupModal">添加QQ群</button>
+                <button class="btn btn-outline" @click="showDeleteGroupModal">删除QQ群</button>
+                <button class="btn btn-outline" @click="showAddGroupModal">添加QQ群</button>
             </div>
         </div>
-        <div class="w-full mt-6 mx-6 max-h-6">
+        <div class="mt-6 mx-6">
             <!-- 筛选器 -->
-            <div class="flex flex-wrap gap-4 mb-4">
-                <select class="select select-bordered w-64" v-model="selectedServer">
+            <div class="flex flex-col lg:flex-row flex-wrap gap-4 mb-4">
+                <select class="select select-bordered w-full lg:w-64" v-model="selectedServer">
                     <option value="">全部服务器</option>
                     <option v-for="server in servers" :key="server.uuid" :value="server.uuid">{{ server.name }}</option>
                 </select>
-                <select class="select select-bordered w-64" v-model="selectedGroup">
+                <select class="select select-bordered w-full lg:w-64" v-model="selectedGroup">
                     <option value="">全部QQ群</option>
                     <option v-for="group in allGroups" :key="group" :value="group">{{ group }}</option>
                 </select>
-                <div class="join w-96">
-                    <input class="input input-bordered join-item" placeholder="搜索" v-model="searchInput"
+                <div class="join w-full lg:w-96">
+                    <input class="input input-bordered join-item w-full" placeholder="搜索" v-model="searchInput"
                         @keyup.enter="performSearch" />
                     <button class="btn join-item" @click="performSearch">搜索</button>
                 </div>
@@ -35,14 +35,14 @@
                 <div class="text-2xl font-bold" v-if="filteredUnboundMembers.length > 0">未绑定的成员</div>
                 <div class="w-full mt-4 flex-1 overflow-y-auto">
                     <div class="overflow-x-auto" v-if="filteredUnboundMembers.length > 0">
-                        <table class="table">
+                        <table class="table table-zebra">
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>QQ群号</th>
-                                    <th>服务器</th>
-                                    <th>名称</th>
-                                    <th>QQ号</th>
+                                    <th class="w-32">QQ群号</th>
+                                    <th class="w-32">服务器</th>
+                                    <th class="w-32">名称</th>
+                                    <th class="w-32">QQ号</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,40 +63,40 @@
         </div>
         <!-- 添加QQ群模态框 -->
         <dialog id="addgroupmodal" class="modal">
-            <div class="modal-box">
+            <div class="modal-box w-11/12 max-w-md">
                 <h3 class="text-lg font-bold">添加QQ群</h3>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-10">服务器</span>
+                        <span class="label-text">服务器</span>
                     </label>
-                    <select class="select mt-2 w-64" v-model="selectedServer">
+                    <select class="select mt-2 w-full" v-model="selectedServer">
                         <option v-for="server in servers" :key="server.uuid" :value="server.uuid">{{ server.name }}
                         </option>
                     </select>
                 </div>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-7.5">QQ群号</span>
+                        <span class="label-text">QQ群号</span>
                     </label>
-                    <input v-model="newGroupId" type="text" placeholder="请输入QQ群号" class="input input-bordered w-64" />
+                    <input v-model="newGroupId" type="text" placeholder="请输入QQ群号" class="input input-bordered w-full" />
                 </div>
-                <div class="modal-action">
-                    <button class="btn btn-success" @click="confirmAddGroup">确认添加</button>
+                <div class="modal-action flex-col sm:flex-row mt-4">
+                    <button class="btn btn-success mb-2 sm:mb-0 sm:mr-2 w-full sm:w-auto" @click="confirmAddGroup">确认添加</button>
                     <form method="dialog">
-                        <button class="btn">取消</button>
+                        <button class="btn w-full sm:w-auto">取消</button>
                     </form>
                 </div>
             </div>
         </dialog>
         <!-- 删除QQ群模态框 -->
         <dialog id="deletegroupmodal" class="modal">
-            <div class="modal-box">
+            <div class="modal-box w-11/12 max-w-md">
                 <h3 class="text-lg font-bold">删除QQ群</h3>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-10">服务器</span>
+                        <span class="label-text">服务器</span>
                     </label>
-                    <select class="select mt-2 w-64" v-model="deleteSelectedServer" @change="deleteSelectedGroup = ''">
+                    <select class="select mt-2 w-full" v-model="deleteSelectedServer" @change="deleteSelectedGroup = ''">
                         <option value="">请选择服务器</option>
                         <option v-for="server in servers" :key="server.uuid" :value="server.uuid">{{ server.name }}
                         </option>
@@ -104,19 +104,19 @@
                 </div>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-7.5">QQ群号</span>
+                        <span class="label-text">QQ群号</span>
                     </label>
-                    <select class="select mt-2 w-64" v-model="deleteSelectedGroup" :disabled="!deleteSelectedServer">
+                    <select class="select mt-2 w-full" v-model="deleteSelectedGroup" :disabled="!deleteSelectedServer">
                         <option value="">请选择QQ群</option>
                         <option v-for="group in getGroupsForServer(deleteSelectedServer)" :key="group" :value="group">{{
                             group }}</option>
                     </select>
                 </div>
-                <div class="modal-action">
-                    <button class="btn btn-error" @click="confirmDeleteGroup"
+                <div class="modal-action flex-col sm:flex-row">
+                    <button class="btn btn-error mb-2 sm:mb-0 sm:mr-2 w-full sm:w-auto" @click="confirmDeleteGroup"
                         :disabled="!deleteSelectedGroup">确认删除</button>
                     <form method="dialog">
-                        <button class="btn">取消</button>
+                        <button class="btn w-full sm:w-auto">取消</button>
                     </form>
                 </div>
             </div>

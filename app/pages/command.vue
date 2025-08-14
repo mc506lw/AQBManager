@@ -1,18 +1,20 @@
 <template>
-    <div class="mt-6 ml-6">
-        <div class="text-2xl font-bold">执行命令</div>
-        <div class="text-xl">执行控制台命令</div>
+    <div class="mt-6 ml-6 flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <div class="text-2xl font-bold">执行命令</div>
+            <div class="text-xl">执行控制台命令</div>
+        </div>
     </div>
     <div class="mockup-window border border-base-300 mx-6 my-4 h-[81%] flex flex-col">
         <div class="border-t bg-base-200 border-base-300 h-full">
-            <div class="h-[90%] w-full overflow-y-auto p-2">
+            <div class="h-[78%] md:h-[90%] w-full overflow-y-auto p-2">
                 <p class="mb-1" v-for="(log, index) in commandLogs" :key="index" :class="getLogClass(log.type)">
                     [{{ log.timestamp }} {{ log.type.toUpperCase() }}]: {{ log.message }}
                 </p>
             </div>
-            <div class="h-12 border-t border-base-300 mx-2 flex join items-center mt-auto">
-                <div class="dropdown dropdown-top w-48 join-item">
-                    <div tabindex="0" role="button" class="btn w-48">{{ selectedServerName || '选择服务器' }}</div>
+            <div class="h-auto border-t border-base-300 mx-2 flex flex-col sm:flex-row items-center mt-auto p-2 gap-2">
+                <div class="dropdown dropdown-top w-full sm:w-48 join-item">
+                    <div tabindex="0" role="button" class="btn w-full">{{ selectedServerName || '选择服务器' }}</div>
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                         <li v-for="server in servers" :key="server.uuid">
                             <a @click="selectServer(server)">{{ server.name }}</a>
@@ -21,7 +23,7 @@
                 </div>
                 <input type="text" placeholder="命令" class="input w-full join-item" v-model="commandInput"
                     @keyup.enter="executeCommand" />
-                <button class="btn w-16 join-item" @click="executeCommand">发送</button>
+                <button class="btn w-full sm:w-16 join-item" @click="executeCommand">发送</button>
             </div>
         </div>
     </div>

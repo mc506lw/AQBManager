@@ -1,18 +1,19 @@
 <template>
-    <div class="max-w-full bg-base-100 p-6">
+    <div class="flex flex-col h-full max-w-full bg-base-100 p-6">
         <!-- 标题区域 -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold"><span class="font-[ZSFT-530]">AQQBot</span> 管理平台</h1>
-            <p class="text-sm text-base-content/70 mt-2">实时管理服务器上AQQBot插件的功能与行为</p>
+            <h1 class="text-3xl font-bold">AQQBot管理平台</h1>
+            <p class="text-base-content/70 mt-2">一站式AQQBot管理解决方案</p>
         </div>
 
-        <!-- 系统信息卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <!-- CPU使用率图表 -->
-            <div class="card card-lg bg-base-100 shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="card-title text-lg">CPU 使用率</h2>
-                    <div class="h-48">
+        <!-- 系统信息卡片区域 -->
+        <div class="flex-grow overflow-y-auto mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- CPU 使用率图表 -->
+            <div class="card bg-base-100 card-lg shadow-sm">
+                <div class="card-body p-4 h-48">
+                    <h2 class="card-title text-sm">CPU 使用率</h2>
+                    <div class="h-full">
                         <canvas ref="cpuChart"></canvas>
                     </div>
                 </div>
@@ -20,9 +21,9 @@
 
             <!-- 内存使用率图表 -->
             <div class="card bg-base-100 card-lg shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="card-title text-lg">内存使用率</h2>
-                    <div class="h-48">
+                <div class="card-body p-4 h-48">
+                    <h2 class="card-title text-sm">内存使用率</h2>
+                    <div class="h-full">
                         <canvas ref="memoryChart"></canvas>
                     </div>
                 </div>
@@ -30,96 +31,95 @@
 
             <!-- 接口请求量图表 -->
             <div class="card bg-base-100 card-lg shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="card-title text-lg">接口请求量</h2>
-                    <div class="h-48">
+                <div class="card-body p-4 h-48">
+                    <h2 class="card-title text-sm">接口请求量</h2>
+                    <div class="h-full">
                         <canvas ref="requestChart"></canvas>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div></div>
 
-        <!-- 系统信息和服务器统计 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- 系统信息 -->
-            <div class="card bg-base-100 card-lg shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title">系统信息</h2>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div><span class="font-semibold">Node版本:</span> {{ systemInfo.nodeVersion }}</div>
-                        <div><span class="font-semibold">面板版本:</span> {{ systemInfo.panelVersion }}</div>
-                        <div><span class="font-semibold">节点版本:</span> {{ systemInfo.nodeVersionInfo }}</div>
-                        <div><span class="font-semibold">用户名:</span> {{ systemInfo.username }}</div>
-                        <div><span class="font-semibold">面板时间:</span> {{ systemInfo.panelTime }}</div>
-                        <div><span class="font-semibold">浏览器时间:</span> {{ systemInfo.browserTime }}</div>
-                        <div><span class="font-semibold">总内存:</span> {{ systemInfo.totalMemory }} MB</div>
-                        <div><span class="font-semibold">空闲内存:</span> {{ systemInfo.freeMemory }} MB</div>
-                        <div><span class="font-semibold">负载平均值:</span> {{ systemInfo.loadAverage ?
-                            (systemInfo.loadAverage.every(val => val === 0) ? 'N/A' : systemInfo.loadAverage.map(val => val.toFixed(2)).join(', ')) : 'N/A' }}</div>
-                        <div><span class="font-semibold">面板内存使用:</span> {{ systemInfo.panelMemoryUsage ?
-                            systemInfo.panelMemoryUsage.toFixed(2) : 'N/A' }} MB
+            <!-- 系统信息和服务器统计 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <!-- 系统信息 -->
+                <div class="card bg-base-100 card-lg shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">系统信息</h2>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div><span class="font-semibold">Node版本:</span> {{ systemInfo.nodeVersion }}</div>
+                            <div><span class="font-semibold">面板版本:</span> {{ systemInfo.panelVersion }}</div>
+                            <div><span class="font-semibold">节点版本:</span> {{ systemInfo.nodeVersionInfo }}</div>
+                            <div><span class="font-semibold">用户名:</span> {{ systemInfo.username }}</div>
+                            <div><span class="font-semibold">面板时间:</span> {{ systemInfo.panelTime }}</div>
+                            <div><span class="font-semibold">浏览器时间:</span> {{ systemInfo.browserTime }}</div>
+                            <div><span class="font-semibold">总内存:</span> {{ systemInfo.totalMemory }} MB</div>
+                            <div><span class="font-semibold">空闲内存:</span> {{ systemInfo.freeMemory }} MB</div>
+                            <div><span class="font-semibold">负载平均值:</span> {{systemInfo.loadAverage ?
+                                (systemInfo.loadAverage.every(val => val === 0) ? 'N/A' : systemInfo.loadAverage.map(val => val.toFixed(2)).join(', ')) : 'N/A' }}</div>
+                            <div><span class="font-semibold">面板内存使用:</span> {{ systemInfo.panelMemoryUsage ?
+                                systemInfo.panelMemoryUsage.toFixed(2) : 'N/A' }} MB
+                            </div>
+                            <div><span class="font-semibold">主机名:</span> {{ systemInfo.hostname }}</div>
+                            <div><span class="font-semibold">平台:</span> {{ systemInfo.platform }}</div>
+                            <div><span class="font-semibold">系统类型:</span> {{ systemInfo.type }}</div>
+                            <div><span class="font-semibold">系统版本:</span> {{ systemInfo.release }}</div>
                         </div>
-                        <div><span class="font-semibold">主机名:</span> {{ systemInfo.hostname }}</div>
-                        <div><span class="font-semibold">平台:</span> {{ systemInfo.platform }}</div>
-                        <div><span class="font-semibold">系统类型:</span> {{ systemInfo.type }}</div>
-                        <div><span class="font-semibold">系统版本:</span> {{ systemInfo.release }}</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 服务器统计 -->
-            <div class="card bg-base-100 card-lg shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title">服务器统计</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center p-4 bg-base-200 rounded-lg">
-                            <div class="text-3xl font-bold">{{ serverStats.total }}</div>
-                            <div class="text-sm">服务器总计</div>
+                <!-- 服务器统计 -->
+                <div class="card bg-base-100 card-lg shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">服务器统计</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-base-200 rounded-lg">
+                                <div class="text-3xl font-bold">{{ serverStats.total }}</div>
+                                <div class="text-sm">服务器总计</div>
+                            </div>
+                            <div class="text-center p-4 bg-base-200 rounded-lg">
+                                <div class="text-3xl font-bold">{{ serverStats.connected }}</div>
+                                <div class="text-sm">已连接</div>
+                            </div>
                         </div>
-                        <div class="text-center p-4 bg-base-200 rounded-lg">
-                            <div class="text-3xl font-bold">{{ serverStats.connected }}</div>
-                            <div class="text-sm">已连接</div>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <h3 class="font-semibold mb-2">服务器列表</h3>
-                        <div class="max-h-40 overflow-y-auto">
-                            <div v-for="(server, uuid) in serverList" :key="uuid"
-                                class="flex justify-between items-center p-2 border-b border-base-300">
-                                <span>{{ server.name || server.ip }}</span>
-                                <span :class="server.connected ? 'text-success' : 'text-error'">
-                                    {{ server.connected ? '在线' : '离线' }}
-                                </span>
+                        <div class="mt-4">
+                            <h3 class="font-semibold mb-2">服务器列表</h3>
+                            <div class="max-h-40 overflow-y-auto">
+                                <div v-for="(server, uuid) in serverList" :key="uuid"
+                                    class="flex justify-between items-center p-2 border-b border-base-300">
+                                    <span>{{ server.name || server.ip }}</span>
+                                    <span :class="server.connected ? 'text-success' : 'text-error'">
+                                        {{ server.connected ? '在线' : '离线' }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 作者信息 -->
-        <div class="stats shadow w-full">
-            <a href="https://qm.qq.com/q/RWfSmi4xmC" target="_blank" class="stat">
-                <div class="stat-figure text-blue-400 icon icon-QQ text-4xl">
-                </div>
-                <div class="stat-title">QQ群</div>
-                <div class="stat-value text-blue-400">669737143</div>
-                <div class="stat-desc">交流群</div>
-            </a>
+            <!-- 作者信息 -->
+            <div class="stats stats-vertical sm:stats-horizontal shadow w-full md:h-36 h-96 mt-4">
+                <a href="https://qm.qq.com/q/RWfSmi4xmC" target="_blank" class="stat">
+                    <div class="stat-figure text-blue-400 icon icon-QQ text-4xl">
+                    </div>
+                    <div class="stat-title">QQ群交流群</div>
+                    <div class="stat-value text-blue-400">669737143</div>
+                </a>
 
-            <a href="https://github.com/Alazeprt" target="_blank" class="stat">
-                <div class="stat-figure text-black icon icon-GitHub text-4xl">
-                </div>
-                <div class="stat-title">插件作者</div>
-                <div class="stat-value text-black">Alazeprt</div>
-            </a>
+                <a href="https://github.com/Alazeprt" target="_blank" class="stat">
+                    <div class="stat-figure text-black icon icon-GitHub text-4xl">
+                    </div>
+                    <div class="stat-title">插件作者</div>
+                    <div class="stat-value text-black">Alazeprt</div>
+                </a>
 
-            <a href="https://github.com/mc506lw" target="_blank" class="stat">
-                <div class="stat-figure text-black icon icon-GitHub text-4xl">
-                </div>
-                <div class="stat-title">面板作者</div>
-                <div class="stat-value text-black">mc506lw</div>
-            </a>
+                <a href="https://github.com/mc506lw" target="_blank" class="stat">
+                    <div class="stat-figure text-black icon icon-GitHub text-4xl">
+                    </div>
+                    <div class="stat-title">面板作者</div>
+                    <div class="stat-value text-black">mc506lw</div>
+                </a>
+            </div>
         </div>
     </div>
 </template>

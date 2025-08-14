@@ -23,7 +23,9 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_gi1af6bwgm.css' },
         { rel: 'icon', type: 'image/x-icon', href: '/logo.png' },
       ]
-    }
+    },
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' }
   },
   modules: [
     '@pinia/nuxt',

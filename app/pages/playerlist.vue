@@ -1,28 +1,28 @@
 <template>
     <div class="w-full bg-base-100">
-        <div class="flex justify-between w-full outline-1 outline-base-300">
-            <div class="flex w-full my-6">
-                <div class="ml-6">
+        <div class="flex flex-col lg:flex-row justify-between w-full outline-1 outline-base-300">
+            <div class="flex flex-col lg:flex-row w-full my-6">
+                <div class="ml-6 mb-4 lg:mb-0">
                     <div class="text-2xl font-bold">玩家管理</div>
                     <div class="text-xl">管理所有玩家</div>
                 </div>
-                <div class="ml-6 w-48 flex items-center justify-center">
+                <div class="ml-6 mb-4 lg:mb-0 flex items-center">
                     <input type="checkbox" checked="checked" class="toggle toggle-md" v-model="onlineStatus"
                         @change="performSearch" />
                     <span class="ml-2">仅在线玩家</span>
                 </div>
-                <select class="select ml-6 mt-2 w-64" v-model="selectedServer">
+                <select class="select ml-6 mb-4 lg:mb-0 mt-2 w-64" v-model="selectedServer">
                     <option value="">全部</option>
                     <option v-for="server in uniqueServers" :key="server" :value="server">{{ server }}</option>
                 </select>
-                <select class="select ml-6 mt-2 w-64" v-model="selectedQQGroup">
+                <select class="select ml-6 mb-4 lg:mb-0 mt-2 w-64" v-model="selectedQQGroup">
                     <option value="">全部</option>
                     <option v-for="group in uniqueQQGroups" :key="group" :value="group">{{ group }}</option>
                 </select>
-                <div class="join ml-6 mt-2 w-96">
+                <div class="join ml-6 mt-2 w-full lg:w-96">
                     <div>
                         <div>
-                            <input class="input join-item" placeholder="搜索内容" v-model="searchInput"
+                            <input class="input join-item w-full" placeholder="搜索内容" v-model="searchInput"
                                 @keyup.enter="performSearch" />
                         </div>
                     </div>
@@ -31,21 +31,21 @@
                     </div>
                 </div>
             </div>
-            <div class="mr-6 mt-8 w-96">
+            <div class="mx-6 mt-4 lg:mt-8 lg:w-96 flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4">
                 <button class="btn btn-outline" @click="refreshData">刷新状态</button>
-                <button class="btn btn-outline ml-4" onclick="addplayermodal.showModal()">添加玩家</button>
+                <button class="btn btn-outline" onclick="addplayermodal.showModal()">添加玩家</button>
             </div>
         </div>
-        <div class="overflow-auto h-[85vh]">
-            <table class="table">
+        <div class="overflow-auto h-96 md:h-[85vh]">
+            <table class="table table-zebra">
                 <thead>
                     <tr>
-                        <th class="w-16">在线状态</th>
-                        <th class="w-96">ID</th>
-                        <th class="w-96">QQ</th>
-                        <th class="w-96">服务器</th>
-                        <th class="w-120">QQ群</th>
-                        <th>操作</th>
+                        <th class="w-16">在线</th>
+                        <th class="w-48">ID</th>
+                        <th class="w-32">QQ</th>
+                        <th class="w-32">服务器</th>
+                        <th class="w-48">QQ群</th>
+                        <th class="w-32">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,49 +61,48 @@
                         </td>
                         <td>{{ item.server }}</td>
                         <td>{{ item.qq_group }}</td>
-                        <th class="w-64">
-                            <div class="join">
-                                <button class="btn btn-soft btn-info join-item"
+                        <td>
+                            <div class="join join-vertical lg:join-horizontal">
+                                <button class="btn btn-soft btn-info btn-xs join-item"
                                     @click="showPlayerDetails(item)">详细</button>
                                 <button @click="showDeleteConfirm(item)"
-                                    class="btn btn-soft btn-error join-item">删除</button>
-
+                                    class="btn btn-soft btn-error btn-xs join-item">删除</button>
                             </div>
-                        </th>
+                        </td>
                     </tr>
                 </tbody>
             </table>
             <!-- 分页组件 -->
-            <div class="join w-full mt-4 mb-4 justify-center" v-if="totalPages > 1">
-                <button class="join-item btn" @click="goToPage(1)" :disabled="currentPage === 1">«</button>
+            <div class="join w-full mt-4 mb-4 justify-center flex-wrap" v-if="totalPages > 1">
+                <button class="join-item btn btn-sm" @click="goToPage(1)" :disabled="currentPage === 1">«</button>
 
                 <!-- 显示当前页前后几页的按钮 -->
                 <template v-for="page in displayedPages" :key="page">
-                    <button class="join-item btn" :class="{ 'btn-active': page === currentPage }"
+                    <button class="join-item btn btn-sm" :class="{ 'btn-active': page === currentPage }"
                         @click="goToPage(page)">
                         {{ page }}
                     </button>
                 </template>
 
-                <button class="join-item btn" @click="goToPage(totalPages)"
+                <button class="join-item btn btn-sm" @click="goToPage(totalPages)"
                     :disabled="currentPage === totalPages">»</button>
             </div>
         </div>
         <dialog id="playerinfomodal" class="modal">
-            <div class="modal-box">
+            <div class="modal-box w-11/12 max-w-2xl">
                 <h3 class="text-lg font-bold">玩家详细信息</h3>
                 <div v-if="currentPlayerDetails">
-                    <div class="flex justify-between py-2">
+                    <div class="flex flex-col sm:flex-row justify-between py-2">
                         <p>UUID:</p>
-                        <p>{{ currentPlayerDetails.uuid }}</p>
+                        <p class="sm:text-right">{{ currentPlayerDetails.uuid }}</p>
                     </div>
-                    <div class="flex justify-between py-2">
+                    <div class="flex flex-col sm:flex-row justify-between py-2">
                         <p>在线状态:</p>
-                        <p>{{ currentPlayerDetails.online ? '在线' : '离线' }}</p>
+                        <p class="sm:text-right">{{ currentPlayerDetails.online ? '在线' : '离线' }}</p>
                     </div>
-                    <div v-if="currentPlayerDetails.online" class="flex justify-between py-2">
+                    <div v-if="currentPlayerDetails.online" class="flex flex-col sm:flex-row justify-between py-2">
                         <p>IP地址:</p>
-                        <p>{{ currentPlayerDetails.ip }}</p>
+                        <p class="sm:text-right">{{ currentPlayerDetails.ip }}</p>
                     </div>
                 </div>
                 <div v-else>
@@ -115,46 +114,46 @@
             </form>
         </dialog>
         <dialog id="deleteconfirm" class="modal">
-            <div class="modal-box">
+            <div class="modal-box w-11/12 max-w-md">
                 <h3 class="text-lg font-bold">确认删除玩家</h3>
                 <p class="py-4">确认删除玩家 {{ currentDeletePlayer?.id }} 吗？</p>
-                <div class="modal-action">
-                    <button class="btn btn-error" @click="confirmDelete">确认删除</button>
+                <div class="modal-action flex-col sm:flex-row">
+                    <button class="btn btn-error mb-2 sm:mb-0 sm:mr-2" @click="confirmDelete">确认删除</button>
                     <form method="dialog">
-                        <button class="btn">取消</button>
+                        <button class="btn w-full sm:w-auto">取消</button>
                     </form>
                 </div>
             </div>
         </dialog>
         <dialog id="addplayermodal" class="modal">
-            <div class="modal-box">
+            <div class="modal-box w-11/12 max-w-md">
                 <h3 class="text-lg font-bold">添加玩家</h3>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-8.5">服务器</span>
+                        <span class="label-text">服务器</span>
                     </label>
-                    <select class="select mt-2 w-64" v-model="selectedServer">
+                    <select class="select mt-2 w-full" v-model="selectedServer">
                         <option v-for="server in uniqueServers" :key="server" :value="server">{{ server }}</option>
                     </select>
                 </div>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-10">QQ号</span>
+                        <span class="label-text">QQ号</span>
                     </label>
                     <input v-model="newplayerqq" type="text" placeholder="请输入QQ号"
-                        class="input input-bordered transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary" />
+                        class="input input-bordered transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary w-full" />
                 </div>
                 <div class="form-control mt-2">
                     <label class="label">
-                        <span class="label-text mr-8.5">玩家ID</span>
+                        <span class="label-text">玩家ID</span>
                     </label>
                     <input v-model="newplayerid" type="text" placeholder="请输入玩家ID"
-                        class="input input-bordered transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary" />
+                        class="input input-bordered transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary w-full" />
                 </div>
-                <div class="modal-action">
-                    <button class="btn btn-success" @click="confirmAdd">确认添加</button>
+                <div class="modal-action flex-col sm:flex-row mt-4">
+                    <button class="btn btn-success mb-2 sm:mb-0 sm:mr-2 w-full sm:w-auto" @click="confirmAdd">确认添加</button>
                     <form method="dialog">
-                        <button class="btn">取消</button>
+                        <button class="btn w-full sm:w-auto">取消</button>
                     </form>
                 </div>
             </div>

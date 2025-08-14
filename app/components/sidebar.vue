@@ -1,5 +1,6 @@
 <template>
-    <div class="flex flex-col h-screen">
+    <!-- Desktop sidebar -->
+    <div class="flex-col h-screen hidden lg:flex">
         <div class="h-16 flex items-center transition-all duration-300 ease-in-out"
             :class="{ 'w-56': isCollapsed, 'w-12': !isCollapsed }">
             <img src="assets/logo.png" class="transition-all duration-300 ease-in-out"
@@ -82,12 +83,70 @@
 
             </li>
         </ul>
-        <div @click="switchAuth" class="flex items-center transition-all duration-300 ease-in-out mt-auto text-3xl bg-base-100 ml-2 mb-2 rounded-md shadow-2xl cursor-pointer"
+        <div @click="switchAuth" class="flex items-center transition-all duration-300 ease-in-out mt-auto text-3xl bg-base-100 mx-2 mb-2 rounded-md shadow-2xl cursor-pointer"
             :class="{ 'h-10 w-56': isCollapsed, 'h-10 w-12': !isCollapsed }">
             <i class="transition-all duration-300 ease-in-out icon icon-renyuandengji"
                 :class="{ 'ml-4': isCollapsed, 'ml-2.5': !isCollapsed }"></i>
             <h1 class="text-2xl mb-1 ml-2 font-bold max-h-8 overflow-hidden"
                 :class="{ 'w-auto': isCollapsed, 'w-1': !isCollapsed }" v-show=isCollapsed>{{ adminname }}</h1>
+        </div>
+    </div>
+
+    <!-- Mobile sidebar -->
+    <div class="drawer lg:hidden max-w-0">
+        <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" v-model="mobileDrawerOpen" />
+        <div class="drawer-content">
+            <!-- Mobile sidebar content will be empty as the toggle is in navbar -->
+        </div>
+        <div class="drawer-side">
+            <label for="sidebar-drawer" class="drawer-overlay"></label>
+            <ul class="menu bg-base-200 text-base-content min-h-full w-64 p-4">
+                <li>
+                    <div class="h-16 flex items-center">
+                        <img src="assets/logo.png" class="ml-2 mt-1 h-12 w-12">
+                        <h1 class="text-xl ml-2 font-bold">管理后台</h1>
+                    </div>
+                </li>
+                <li class="menu-title">操作菜单</li>
+                <li>
+                    <NuxtLink to="/" active-class="menu-active" class="icon icon-yibiaopan" @click="closeMobileDrawer">仪表盘</NuxtLink>
+                </li>
+                <li class="menu-title">玩家管理</li>
+                <li>
+                    <NuxtLink to="/playerlist" active-class="menu-active" class="icon icon-renyuanguanli" @click="closeMobileDrawer">玩家列表</NuxtLink>
+                </li>
+                <li class="menu-title">系统配置</li>
+                <li>
+                    <NuxtLink to="/botconfig" active-class="menu-active" class="icon icon-jiqiren" @click="closeMobileDrawer">机器人配置</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/groupmanage" active-class="menu-active" class="icon icon-wangluoxitong" @click="closeMobileDrawer">QQ群管理</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/servers" active-class="menu-active" class="icon icon-fuwuqi" @click="closeMobileDrawer">服务器管理</NuxtLink>
+                </li>
+                <li class="menu-title">指令控制</li>
+                <li>
+                    <NuxtLink to="/command" active-class="menu-active" class="icon icon-hutong" @click="closeMobileDrawer">远程命令</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/customcommand" active-class="menu-active" class="icon icon-line-commandzhiling" @click="closeMobileDrawer">自定义指令</NuxtLink>
+                </li>
+                <li class="menu-title">配置中心</li>
+                <li>
+                    <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi" @click="closeMobileDrawer">插件配置</NuxtLink>
+                </li>
+                <li class="menu-title">实用工具</li>
+                <li>
+                    <NuxtLink to="/widgets" active-class="menu-active" class="icon icon-gongnengdingyi" @click="closeMobileDrawer">小工具</NuxtLink>
+                </li>
+                <li class="mt-auto">
+                    <div @click="switchAuth" class="flex items-center text-3xl bg-base-100 rounded-md shadow-md cursor-pointer p-2">
+                        <i class="icon icon-renyuandengji"></i>
+                        <h1 class="text-2xl ml-2 font-bold">{{ adminname }}</h1>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
     <Auth />
@@ -102,9 +161,14 @@ const customStore = useCustomStore()
 const isCollapsed = computed(() => customStore.isCollapsed)
 const adminname = ref('')
 const loading = ref(false)
+const mobileDrawerOpen = ref(false)
 
 function switchAuth() {
   customStore.switchAuth()
+}
+
+function closeMobileDrawer() {
+  mobileDrawerOpen.value = false
 }
 
 const admininfom = async() => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-full bg-base-100 p-6">
+    <div class="w-full bg-base-100 p-6 h-full flex flex-col">
         <!-- 标题区域 -->
         <div class="mb-8">
             <h1 class="text-4xl font-bold">小工具中心</h1>
@@ -7,11 +7,11 @@
         </div>
 
         <!-- 小工具卡片网格 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto flex-grow">
             <!-- 动态渲染的小工具卡片 -->
             <a :href="widget.isExternal ? widget.url : widget.path" :target="widget.isExternal ? '_blank' : ''" v-for="(widget, index) in widgets"
                 :key="index"
-                class="card bg-base-200 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer card-compact h-36"
+                class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer card-compact h-36"
                 @click="widget.isExternal ? openExternalLink(widget.url) : openWidget(widget.path)">
                 <div class="card-body p-4">
                     <div class="flex items-center mb-3">

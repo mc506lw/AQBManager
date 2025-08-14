@@ -5,7 +5,7 @@
         <div class="text-2xl font-bold">OneBot配置</div>
         <div class="text-xl">配置OneBot连接信息</div>
       </div>
-      <div class="mr-6 mt-4 md:mt-8 mb-4 md:mb-0 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+      <div class="mx-6 mt-4 md:mt-8 mb-4 md:mb-0 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
         <button class="btn btn-outline" @click="refreshData">刷新</button>
         <select class="select select-bordered w-full md:w-64" v-model="selectedServer">
           <option value="">请选择服务器</option>

@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col h-full">
-    <div class="flex flex-col md:flex-row justify-between w-full border-b border-base-300">
+    <div class="flex flex-col lg:flex-row justify-between w-full border-b border-base-300">
       <div class="mt-6 ml-6">
         <div class="text-2xl font-bold">自定义命令配置</div>
         <div class="text-xl">配置自定义命令</div>
       </div>
-      <div class="mr-6 mt-4 md:mt-8 mb-4 md:mb-0 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+      <div class="mx-6 mt-4 lg:mt-8 mb-4 lg:mb-0 flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2">
         <button class="btn btn-outline" @click="refreshData">刷新</button>
-        <select class="select select-bordered w-full md:w-64" v-model="selectedServer">
+        <select class="select select-bordered w-full lg:w-64" v-model="selectedServer">
           <option value="">请选择服务器</option>
           <option v-for="server in servers" :key="server.uuid" :value="server.uuid">{{ server.name }}</option>
         </select>
@@ -34,41 +34,41 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="justify-between w-full flex form-control mb-4 flex-col sm:flex-row sm:items-center">
                   <label class="label">
                     <span class="label-text">是否启用</span>
                   </label>
-                  <input type="checkbox" class="toggle toggle-primary" v-model="command.enable" />
+                  <input type="checkbox" class="toggle toggle-primary mt-2 sm:mt-0" v-model="command.enable" />
                 </div>
                 
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="form-control mb-4">
                   <label class="label">
                     <span class="label-text">调用命令列表</span>
                   </label>
                   <textarea 
-                    class="textarea textarea-bordered h-24" 
+                    class="textarea textarea-bordered h-24 w-full" 
                     v-model="command.command" 
                     placeholder="每行一个命令"
                   ></textarea>
                 </div>
                 
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="form-control mb-4">
                   <label class="label">
                     <span class="label-text">绑定账户执行命令</span>
                   </label>
                   <textarea 
-                    class="textarea textarea-bordered h-24" 
+                    class="textarea textarea-bordered h-24 w-full" 
                     v-model="command.execute" 
                     placeholder="每行一个命令"
                   ></textarea>
                 </div>
                 
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="form-control mb-4">
                   <label class="label">
                     <span class="label-text">未绑定账户执行命令</span>
                   </label>
                   <textarea 
-                    class="textarea textarea-bordered h-24" 
+                    class="textarea textarea-bordered h-24 w-full" 
                     v-model="command.unbind_execute" 
                     placeholder="每行一个命令"
                   ></textarea>
@@ -76,45 +76,45 @@
               </div>
               
               <div>
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="form-control mb-4">
                   <label class="label">
                     <span class="label-text">使用账户索引</span>
                   </label>
                   <input 
                     type="number" 
-                    class="input input-bordered" 
+                    class="input input-bordered w-full" 
                     v-model="command.choose_account" 
                     min="0"
                   />
                 </div>
                 
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="form-control mb-4">
                   <label class="label">
                     <span class="label-text">绑定账户返回信息</span>
                   </label>
                   <textarea 
-                    class="textarea textarea-bordered h-24" 
+                    class="textarea textarea-bordered h-24 w-full" 
                     v-model="command.output" 
                     placeholder="每行一条信息"
                   ></textarea>
                 </div>
                 
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="form-control mb-4">
                   <label class="label">
                     <span class="label-text">未绑定账户返回信息</span>
                   </label>
                   <textarea 
-                    class="textarea textarea-bordered h-24" 
+                    class="textarea textarea-bordered h-24 w-full" 
                     v-model="command.unbind_output" 
                     placeholder="每行一条信息"
                   ></textarea>
                 </div>
                 
-                <div class="justify-between w-full flex form-control mb-4">
+                <div class="justify-between w-full flex form-control mb-4 flex-col sm:flex-row sm:items-center">
                   <label class="label">
                     <span class="label-text">是否格式化返回信息</span>
                   </label>
-                  <input type="checkbox" class="toggle toggle-primary" v-model="command.format" />
+                  <input type="checkbox" class="toggle toggle-primary mt-2 sm:mt-0" v-model="command.format" />
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@
           </label>
           <input 
             type="text" 
-            class="input input-bordered ml-2" 
+            class="input input-bordered w-full" 
             v-model="newCommandKey" 
             placeholder="请输入命令键名"
           />
