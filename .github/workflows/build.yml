@@ -62,28 +62,18 @@ jobs:
         
         # 解压 Windows Node.js 到 win 版本目录
         unzip node-win-x64.zip -d package/AQQBot-web-win/
-        # 重命名为标准名称（如果解压出来的目录名不一致）
-        if [ -d "package/AQQBot-web-win/node-v22.18.0-win-x64" ]; then
-          echo "Windows Node.js directory already has correct name"
-        else
-          # 获取实际解压出来的目录名并重命名
-          WINDOWS_DIR=$(find package/AQQBot-web-win -maxdepth 1 -type d -name "*win-x64" | head -1)
-          if [ -n "$WINDOWS_DIR" ]; then
-            mv "$WINDOWS_DIR" package/AQQBot-web-win/node-v22.18.0-win-x64
-          fi
+        # 重命名为标准名称
+        WINDOWS_DIR=$(find package/AQQBot-web-win -maxdepth 1 -type d -name "*win-x64" | head -1)
+        if [ -n "$WINDOWS_DIR" ] && [ "$WINDOWS_DIR" != "package/AQQBot-web-win/node-v22.18.0-win-x64" ]; then
+          mv "$WINDOWS_DIR" package/AQQBot-web-win/node-v22.18.0-win-x64
         fi
         
-        # 解压 Linux Node.js 到 linux 版本目录 (两步解压)
+        # 解压 Linux Node.js 到 linux 版本目录
         tar -xJf node-linux-x64.tar.xz -C package/AQQBot-web-linux/
-        # 重命名为标准名称（如果解压出来的目录名不一致）
-        if [ -d "package/AQQBot-web-linux/node-v22.18.0-linux-x64" ]; then
-          echo "Linux Node.js directory already has correct name"
-        else
-          # 获取实际解压出来的目录名并重命名
-          LINUX_DIR=$(find package/AQQBot-web-linux -maxdepth 1 -type d -name "*linux-x64" | head -1)
-          if [ -n "$LINUX_DIR" ]; then
-            mv "$LINUX_DIR" package/AQQBot-web-linux/node-v22.18.0-linux-x64
-          fi
+        # 重命名为标准名称
+        LINUX_DIR=$(find package/AQQBot-web-linux -maxdepth 1 -type d -name "*linux-x64" | head -1)
+        if [ -n "$LINUX_DIR" ] && [ "$LINUX_DIR" != "package/AQQBot-web-linux/node-v22.18.0-linux-x64" ]; then
+          mv "$LINUX_DIR" package/AQQBot-web-linux/node-v22.18.0-linux-x64
         fi
         
         # 显示最终的目录结构
@@ -116,12 +106,23 @@ jobs:
         
         cd ..
         
-    - name: Upload artifacts
+    - name: Upload Windows artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AQQBot-web-packages
-        path: |
-          AQQBot-web-win.zip
-          AQQBot-web-linux.zip
-          AQQBot-web-noenv.zip
+        name: AQQBot-web-win
+        path: AQQBot-web-win.zip
+        retention-days: 30
+        
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AQQBot-web-linux
+        path: AQQBot-web-linux.zip
+        retention-days: 30
+        
+    - name: Upload No Environment artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AQQBot-web-noenv
+        path: AQQBot-web-noenv.zip
         retention-days: 30
