@@ -26,7 +26,7 @@
           </div>
           <div class="justify-between flex">
             <p class="w-full">Token：</p>
-            <p>{{ server.token }}</p>
+            <p>{{ maskToken(server.token) }}</p>
           </div>
           <div class="justify-end card-actions mt-4">
             <button onclick="editserver1.showModal()" @click="editserver(server)" class="btn btn-primary btn-sm">编辑</button>
@@ -135,6 +135,29 @@ const editedservertoken = ref('')
 const editedservername = ref('')
 const deletedserver = ref('')
 
+// 打码函数
+const maskToken = (token) => {
+  if (!token) return '';
+  
+  // 如果token长度小于等于4，直接返回星号
+  if (token.length <= 4) {
+    return '****';
+  }
+  
+  // 如果token长度在5-8之间，显示首尾字符
+  if (token.length <= 8) {
+    const start = token.substring(0, 1);
+    const end = token.substring(token.length - 1);
+    const masked = '*'.repeat(token.length - 2);
+    return `${start}${masked}${end}`;
+  }
+  
+  // 如果token长度大于8，显示前4位和后4位
+  const start = token.substring(0, 4);
+  const end = token.substring(token.length - 4);
+  return `${start}****${end}`;
+};
+
 const deleteserver = async (server) => {
   deletedserver.value = server
 }
@@ -209,16 +232,13 @@ const dodelete = async () => {
         action: 'delete',
         token: token.value,
         uuid: deletedserver.value.uuid
-      },
+      }
     })
-    console.log(result)
     if (result.success) {
-      console.log(result)
-
+      deletedserver.value = ''
+      warningmsg3.value = ''
       getservers()
       deleteserver1.close()
-      warningmsg3.value = ''
-      deletedserver.value = ''
     }
     else {
       warningmsg3.value = result.msg
@@ -226,9 +246,9 @@ const dodelete = async () => {
   }
   catch (err) {
     console.error(err)
+    warningmsg3.value = '服务器错误'
   }
 }
-
 
 const addserver = async () => {
   try {
@@ -239,17 +259,14 @@ const addserver = async () => {
         token: token.value,
         serverip: newserverip.value,
         servertoken: newservertoken.value
-      },
+      }
     })
-    console.log(result)
     if (result.success) {
-      console.log(result)
-
-      getservers()
-      addserver1.close()
-      warningmsg1.value = ''
       newserverip.value = ''
       newservertoken.value = ''
+      warningmsg1.value = ''
+      getservers()
+      addserver1.close()
     }
     else {
       warningmsg1.value = result.msg
@@ -257,11 +274,9 @@ const addserver = async () => {
   }
   catch (err) {
     console.error(err)
+    warningmsg1.value = '服务器错误'
   }
 }
-
-
-
 </script>
 
 <style>
