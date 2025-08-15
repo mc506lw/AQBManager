@@ -27,50 +27,83 @@ jobs:
     - name: Build Nuxt project
       run: yarn build
       
-    - name: Download Node.js for Windows
+    - name: Download Node.js distributions
       run: |
+        # 下载 Windows Node.js
         curl -L -o node-win-x64.zip https://nodejs.org/dist/v22.18.0/node-v22.18.0-win-x64.zip
         
-    - name: Prepare package structure
+        # 下载 Linux Node.js
+        curl -L -o node-linux-x64.tar.xz https://nodejs.org/dist/v22.18.0/node-v22.18.0-linux-x64.tar.xz
+        
+    - name: Prepare package structures
       run: |
-        # 创建目标目录结构
-        mkdir -p package/AQQBot-web
+        # 创建三个目标目录结构
+        mkdir -p package/AQQBot-web-win
+        mkdir -p package/AQQBot-web-linux
+        mkdir -p package/AQQBot-web-noenv
         
-        # 复制构建输出
-        if [ -d ".output" ]; then
-          cp -r .output package/AQQBot-web/
-        else
-          echo "Warning: .output directory not found"
-        fi
+        # 复制构建输出到所有三个目录
+        for dir in package/AQQBot-web-win package/AQQBot-web-linux package/AQQBot-web-noenv; do
+          if [ -d ".output" ]; then
+            cp -r .output "$dir"/
+          else
+            echo "Warning: .output directory not found"
+          fi
+        done
         
-        # 复制script目录下的所有文件
-        if [ -d "script" ]; then
-          cp -r script/* package/AQQBot-web/ 2>/dev/null || echo "No files to copy from script directory"
-        else
-          echo "Warning: script directory not found"
-        fi
+        # 复制 script 目录内容到所有三个目录的根目录
+        for dir in package/AQQBot-web-win package/AQQBot-web-linux package/AQQBot-web-noenv; do
+          if [ -d "script" ]; then
+            cp -r script/* "$dir"/ 2>/dev/null || echo "No files to copy from script directory"
+          else
+            echo "Warning: script directory not found"
+          fi
+        done
         
-        # 解压Windows Node.js到包目录
-        unzip node-win-x64.zip -d package/AQQBot-web/
-        # 重命名Node.js目录为node-v22.18.0-win-x64
-        mv package/AQQBot-web/node-v22.18.0-win-x64 package/AQQBot-web/node-v22.18.0-win-x64-temp
-        mv package/AQQBot-web/node-v22.18.0-win-x64-temp package/AQQBot-web/node-v22.18.0-win-x64
+        # 解压 Windows Node.js 到 win 版本目录
+        unzip node-win-x64.zip -d package/AQQBot-web-win/
+        mv package/AQQBot-web-win/node-v22.18.0-win-x64 package/AQQBot-web-win/node-v22.18.0-win-x64
+        
+        # 解压 Linux Node.js 到 linux 版本目录 (两步解压)
+        tar -xJf node-linux-x64.tar.xz -C package/AQQBot-web-linux/
+        mv package/AQQBot-web-linux/node-v22.18.0-linux-x64 package/AQQBot-web-linux/node-v22.18.0-linux-x64
         
         # 显示最终的目录结构
-        echo "Final package structure:"
-        find package -type f | sort
+        echo "Final package structures:"
+        echo "=== Windows version ==="
+        find package/AQQBot-web-win -type f | head -20
+        echo "=== Linux version ==="
+        find package/AQQBot-web-linux -type f | head -20
+        echo "=== No environment version ==="
+        find package/AQQBot-web-noenv -type f | head -20
         
-    - name: Create zip archive
+    - name: Create zip archives
       run: |
         cd package
-        zip -r ../AQQBot-web.zip AQQBot-web
-        cd ..
-        echo "Archive created successfully"
-        echo "Archive size: $(du -h AQQBot-web.zip)"
         
-    - name: Upload artifact
+        # 创建 Windows 版本压缩包
+        zip -r ../AQQBot-web-win.zip AQQBot-web-win
+        echo "Windows archive created successfully"
+        echo "Windows archive size: $(du -h ../AQQBot-web-win.zip)"
+        
+        # 创建 Linux 版本压缩包
+        zip -r ../AQQBot-web-linux.zip AQQBot-web-linux
+        echo "Linux archive created successfully"
+        echo "Linux archive size: $(du -h ../AQQBot-web-linux.zip)"
+        
+        # 创建无环境版本压缩包
+        zip -r ../AQQBot-web-noenv.zip AQQBot-web-noenv
+        echo "No environment archive created successfully"
+        echo "No environment archive size: $(du -h ../AQQBot-web-noenv.zip)"
+        
+        cd ..
+        
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: AQQBot-web-package
-        path: AQQBot-web.zip
+        name: AQQBot-web-packages
+        path: |
+          AQQBot-web-win.zip
+          AQQBot-web-linux.zip
+          AQQBot-web-noenv.zip
         retention-days: 30
