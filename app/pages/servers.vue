@@ -129,6 +129,7 @@ const newserverip = ref('');
 const newservertoken = ref('');
 const warningmsg1 = ref('');
 const warningmsg2 = ref('');
+const warningmsg3 = ref('');
 const editedserver = ref('')
 const editedserverip = ref('')
 const editedservertoken = ref('')

@@ -2,7 +2,7 @@
 # 可使用 /aqqbot reload 重载
 
 ## 配置文件版本, 请勿修改!!!
-version: 19
+version: 22
 
 # 存储相关配置 (重启后生效)
 storage:
@@ -65,6 +65,9 @@ whitelist:
   # 是否开启退群自动解绑
   unbind_on_leave: true
 
+  # 可以无需绑定即可进入的用户所需要的权限:
+  bypass_permission: "aqqbot.whitelist.bypass"
+
   # 使用非管理员命令的用户的冷却时间 (单位: 秒)
   cooldown:
     # 绑定指令的冷却时间
@@ -118,6 +121,21 @@ information:
       - "/在线玩家"
       - "服务器在线玩家"
       - "/服务器在线玩家"
+
+  # 功能: @某人
+  at:
+    # 是否启用该功能
+    enable: true
+
+    # @人所需要包含的内容 (${player} 代表 @ 的玩家名)
+    command:
+      - "@${player}"
+      - "${player}"
+
+    # 在 @某人 后的操作
+    action:
+      - 'playsound block.bell.use master ${player}'
+      - 'title @a subtitle {"text":"[AQQBot] ${userId} @了你!","color":"gold"}'
 
 # 聊天(群服互联)功能
 # * Velocity类服务端兼容性可能不是很好
@@ -204,6 +222,14 @@ notify:
     # 离开时发送的消息:
     leave: "[AQQBot] ${playerName}(${userId}) 离开了服务器!"
 
+  # 玩家死亡通知
+  player_death:
+    # 是否开启该功能
+    enable: true
+
+    # 发送的消息:
+    message: "[AQQBot] ${playerName}(${userId}) 因 ${deathMessage} 死亡了!"
+
 # 服务器命令远程执行
 # * 该功能仅支持Bukkit类服务端
 # 通过在QQ发送指定前缀消息来执行服务器命令
@@ -231,12 +257,12 @@ command_execution:
   # 越前的越优先测试 若无法使用则会继续进行下一个测试 直到成功或全部测试失败
   # 可用方案:
   # - NATIVE: 通过 Bukkit 内部 API 内部方法创建 CommandSender 执行命令 (适用于高版本/非混合端)
-  # - DECIDATED_SERVER: 通过 Bukkit 内部 API 获取 DecidatedServer 实例并以其执行命令 (适用于较高版本/非混合端)
+  # - DEDICATED_SERVER: 通过 Bukkit 内部 API 获取 DedicatedServer 实例并以其执行命令 (适用于较高版本/非混合端)
   # - MINECRAFT_SERVER: 通过 Bukkit 内部 API 获取 MinecraftServer 实例并创建 RCON 实例以其执行命令 (适用于较低版本/部分混合端)
   # - SIMULATE_CONSOLE: 创建一个基于 Bukkit 外部 API 的 CommandConsoleSender 终端实例并执行命令 (适用于全版本/混合端)
   sort:
     - "NATIVE"
-    - "DECIDATED_SERVER"
+    - "DEDICATED_SERVER"
     - "MINECRAFT_SERVER"
     - "SIMULATE_CONSOLE"
 
@@ -260,7 +286,7 @@ command_execution:
   # 单位: 秒
   delay: 2
 
-# Webhook 相关功能 (远程 WebSocket 服务器) (暂不可用)
+# Webhook 相关功能 (远程 WebSocket 服务器)
 webhook:
   # 是否启用该功能
   enable: false
@@ -301,4 +327,3 @@ debug:
     # 设置为 -1 代表关服时保存
     # 设置为 0 代表实时保存 (在有新的日志时就保存)
     save_interval: 0
-

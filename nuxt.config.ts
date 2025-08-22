@@ -21,7 +21,7 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_gi1af6bwgm.css' },
-        { rel: 'icon', type: 'image/x-icon', href: '/logo.png' },
+        { rel: 'icon', type: 'image/x-icon', href: '/logo_LR.png' },
       ]
     },
     pageTransition: { name: 'page', mode: 'out-in' },
@@ -32,14 +32,10 @@ export default defineNuxtConfig({
   ],
   hooks: {
     'nitro:init': async (nitro) => {
-      console.log('🔄 正在初始化所有服务器连接...');
       await initializeAllServerConnections();
-      console.log('✅ 所有服务器连接初始化完成');
     },
     'close': async () => {
-      console.log('收到关闭信号');
       await shutdownServerConnections();
-      console.log('✅ 所有服务器连接已关闭。');
     }
   },
   ignore: [
