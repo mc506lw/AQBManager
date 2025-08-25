@@ -120,6 +120,28 @@
                     <div class="stat-value text-black">mc506lw</div>
                 </a>
             </div>
+            <div class="stats stats-vertical sm:stats-horizontal shadow w-full md:h-36 h-96 mt-4">
+                <a href="https://www.bilibili.com/video/BV19tYvzdEm3" target="_blank" class="stat">
+                    <div class="stat-figure text-blue-300 icon icon-bilibili-line text-4xl">
+                    </div>
+                    <div class="stat-title">给个三连吧~</div>
+                    <div class="stat-value text-blue-300">宣传视频 求三连</div>
+                </a>
+
+                <a href="https://www.bilibili.com/video/BV1hSeBzAEBX" target="_blank" class="stat">
+                    <div class="stat-figure text-blue-300 icon icon-bilibili-line text-4xl">
+                    </div>
+                    <div class="stat-title">给个三连吧~</div>
+                    <div class="stat-value text-blue-300">教程视频 求三连</div>
+                </a>
+
+                <a href="https://www.minebbs.com/resources/aqbmanager-aqqbot.13126/" target="_blank" class="stat">
+                    <img src="https://www.minebbs.com/data/assets/logo/favicon.webp" class="stat-figure text-blue-500 w-8 h-8">
+                    </img>
+                    <div class="stat-title">给个5星评价吧~</div>
+                    <div class="stat-value text-blue-500">插件资源 求评价</div>
+                </a>
+            </div>
         </div>
     </div>
 </template>

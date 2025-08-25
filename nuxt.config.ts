@@ -16,11 +16,11 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'AQQBot' },
-        { name: 'keywords', content: 'AQQBot' }
+        { name: 'description', content: 'AQBManager：一个现代化的 AQQBot 管理平台，提供直观的 Web 界面来管理多个 AQQBot 服务器实例' },
+        { name: 'keywords', content: 'AQQBot, 管理平台, 机器人管理, Nuxt, DaisyUI, Tailwind CSS, WebSocket, 我的世界插件' }
       ],
       link: [
-        { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_gi1af6bwgm.css' },
+        { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_nol0oj544cm.css' },
         { rel: 'icon', type: 'image/x-icon', href: '/logo_LR.png' },
       ]
     },

@@ -10,7 +10,11 @@ onMounted(() => {
 })
 // SEO 和页面配置
 useHead({
-  title: 'AQQBot'
+  title: 'AQBManager',
+  meta: [
+    { name: 'robots', content: 'noindex, nofollow' },
+    { name: 'googlebot', content: 'noindex, nofollow' }
+  ]
 });
 </script>
 

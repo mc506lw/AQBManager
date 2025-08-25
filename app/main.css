@@ -1,14 +1,14 @@
 @import "tailwindcss";
-@plugin "daisyui";
-
+@import url("https://fontsapi.zeoseven.com/92/main/result.css");
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
 .icon {
   font-family: "iconfont" !important;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-@import url("https://fontsapi.zeoseven.com/92/main/result.css");
 
 body {
     font-family: "Smiley Sans Oblique";
