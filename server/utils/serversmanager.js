@@ -198,7 +198,7 @@ export async function sendActionToConnectedServer(uuid, action, params = null) {
         Object.assign(requestData, params);
     }
     
-    console.log(`📤 向服务器 ${uuid} 发送动作: ${action}`, params ? params : '');
+    // console.log(`📤 向服务器 ${uuid} 发送动作: ${action}`, params ? params : '');
     
     // 发送消息并等待响应
     return new Promise((resolve, reject) => {

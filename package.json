@@ -1,5 +1,7 @@
 {
-  "name": "nuxt-app",
+  "name": "aqbmanager",
+  "version": "a1.0.3",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,6 +17,7 @@
     "bcryptjs": "^3.0.2",
     "chart.js": "^4.5.0",
     "daisyui": "^5.0.50",
+    "marked": "^16.2.1",
     "nuxt": "^4.0.1",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.11",

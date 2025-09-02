@@ -98,48 +98,53 @@
             </div>
 
             <!-- 作者信息 -->
-            <div class="stats stats-vertical sm:stats-horizontal shadow w-full md:h-36 h-96 mt-4">
-                <a href="https://qm.qq.com/q/RWfSmi4xmC" target="_blank" class="stat">
-                    <div class="stat-figure text-blue-400 icon icon-QQ text-4xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full mt-4">
+                <a href="https://qm.qq.com/q/RWfSmi4xmC" target="_blank" class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="card-body items-center text-center">
+                        <div class="stat-figure text-blue-400 icon icon-QQ text-4xl"></div>
+                        <h2 class="card-title">QQ群交流群</h2>
+                        <p class="text-blue-400">669737143</p>
                     </div>
-                    <div class="stat-title">QQ群交流群</div>
-                    <div class="stat-value text-blue-400">669737143</div>
                 </a>
 
-                <a href="https://github.com/Alazeprt" target="_blank" class="stat">
-                    <div class="stat-figure text-black icon icon-GitHub text-4xl">
+                <a href="https://github.com/Alazeprt" target="_blank" class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="card-body items-center text-center">
+                        <div class="stat-figure text-black icon icon-GitHub text-4xl"></div>
+                        <h2 class="card-title">插件作者</h2>
+                        <p class="text-black">Alazeprt</p>
                     </div>
-                    <div class="stat-title">插件作者</div>
-                    <div class="stat-value text-black">Alazeprt</div>
                 </a>
 
-                <a href="https://github.com/mc506lw" target="_blank" class="stat">
-                    <div class="stat-figure text-black icon icon-GitHub text-4xl">
+                <a href="https://github.com/mc506lw" target="_blank" class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="card-body items-center text-center">
+                        <div class="stat-figure text-black icon icon-GitHub text-4xl"></div>
+                        <h2 class="card-title">面板作者</h2>
+                        <p class="text-black">mc506lw</p>
                     </div>
-                    <div class="stat-title">面板作者</div>
-                    <div class="stat-value text-black">mc506lw</div>
-                </a>
-            </div>
-            <div class="stats stats-vertical sm:stats-horizontal shadow w-full md:h-36 h-96 mt-4">
-                <a href="https://www.bilibili.com/video/BV19tYvzdEm3" target="_blank" class="stat">
-                    <div class="stat-figure text-blue-300 icon icon-bilibili-line text-4xl">
-                    </div>
-                    <div class="stat-title">给个三连吧~</div>
-                    <div class="stat-value text-blue-300">宣传视频 求三连</div>
                 </a>
 
-                <a href="https://www.bilibili.com/video/BV1hSeBzAEBX" target="_blank" class="stat">
-                    <div class="stat-figure text-blue-300 icon icon-bilibili-line text-4xl">
+                <a href="https://www.bilibili.com/video/BV19tYvzdEm3" target="_blank" class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="card-body items-center text-center">
+                        <div class="stat-figure text-blue-300 icon icon-bilibili-line text-4xl"></div>
+                        <h2 class="card-title">给个三连吧~</h2>
+                        <p class="text-blue-300">宣传视频 求三连</p>
                     </div>
-                    <div class="stat-title">给个三连吧~</div>
-                    <div class="stat-value text-blue-300">教程视频 求三连</div>
                 </a>
 
-                <a href="https://www.minebbs.com/resources/aqbmanager-aqqbot.13126/" target="_blank" class="stat">
-                    <img src="https://www.minebbs.com/data/assets/logo/favicon.webp" class="stat-figure text-blue-500 w-8 h-8">
-                    </img>
-                    <div class="stat-title">给个5星评价吧~</div>
-                    <div class="stat-value text-blue-500">插件资源 求评价</div>
+                <a href="https://www.bilibili.com/video/BV1hSeBzAEBX" target="_blank" class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="card-body items-center text-center">
+                        <div class="stat-figure text-blue-300 icon icon-bilibili-line text-4xl"></div>
+                        <h2 class="card-title">给个三连吧~</h2>
+                        <p class="text-blue-300">教程视频 求三连</p>
+                    </div>
+                </a>
+
+                <a href="https://www.minebbs.com/resources/aqbmanager-aqqbot.13126/" target="_blank" class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="card-body items-center text-center">
+                        <img src="https://www.minebbs.com/data/assets/logo/favicon.webp" class="stat-figure text-blue-500 w-8 h-8">
+                        <h2 class="card-title">给个5星评价吧~</h2>
+                        <p class="text-blue-500">插件资源 求评价</p>
+                    </div>
                 </a>
             </div>
         </div>

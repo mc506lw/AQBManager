@@ -16,11 +16,14 @@
 **AQQBot 仓库**: [AQQBot](https://github.com/alazeprt/AQQBot)
 **AQQBot 文档**: [aqqbot.alazeprt.top](https://aqqbot.alazeprt.top/)
 
+**AI助手**: 支持OpenAI等兼容API的AI模型，提供智能对话功能。
+
 ### 🎯 核心功能
 - ✅ **多服务器管理** - 集中管理多个 AQQBot 服务器实例
 - ✅ **实时监控** - 查看 CPU、内存使用率和接口请求量等系统指标
 - ✅ **插件配置** - 在线修改 AQQBot 插件配置项
 - ✅ **OneBot 配置** - 管理 OneBot 后端连接信息
+- ✅ **AI智能助手** - 与AI模型交互，获取智能回复
 - ✅ **现代化界面** - 基于 Nuxt 3 和 DaisyUI 构建的响应式 UI
 
 ---
@@ -68,6 +71,9 @@
 
 ### 🌐 响应式设计
 基于 Tailwind CSS 和 DaisyUI 构建，适配各种设备屏幕尺寸。
+
+### 🤖 AI智能助手
+与OpenAI等AI模型集成，提供智能客服功能。用户可以配置API地址、密钥、模型和最大token数，实现与AI的实时对话。
 
 ---
 

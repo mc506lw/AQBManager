@@ -15,8 +15,8 @@ async function send_inform() {
     
     // 获取系统信息
     const nodeVersion = process.version;
-    const panelVersion = 'a1.0.2';
-    const nodeVersionInfo = '2.0-alpha.12';
+    const panelVersion = 'a1.0.3';
+    const nodeVersionInfo = '2.0-alpha.13';
     const username = os.userInfo().username;
     const panelTime = new Date().toLocaleString();
     const browserTime = new Date().toLocaleString(); // 假设浏览器时间与面板时间相同
