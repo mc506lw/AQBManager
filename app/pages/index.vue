@@ -362,17 +362,17 @@ const updateChartData = () => {
     requestData.value = newRequestData
 
     // 更新图表
-    if (cpuChartInstance) {
+    if (cpuChartInstance && !cpuChartInstance.destroyed) {
         cpuChartInstance.data.labels = timeLabels.value
         cpuChartInstance.data.datasets[0].data = cpuData.value
         cpuChartInstance.update('none')
     }
-    if (memoryChartInstance) {
+    if (memoryChartInstance && !memoryChartInstance.destroyed) {
         memoryChartInstance.data.labels = timeLabels.value
         memoryChartInstance.data.datasets[0].data = memoryData.value
         memoryChartInstance.update('none')
     }
-    if (requestChartInstance) {
+    if (requestChartInstance && !requestChartInstance.destroyed) {
         requestChartInstance.data.labels = timeLabels.value
         requestChartInstance.data.datasets[0].data = requestData.value
         requestChartInstance.update('none')
@@ -452,6 +452,7 @@ const fetchServerInfo = async () => {
 
 // 定时更新数据
 let updateInterval = null
+let chartUpdateInterval = null
 
 const startDataUpdate = () => {
     // 立即获取一次数据
@@ -463,6 +464,11 @@ const startDataUpdate = () => {
         fetchSystemInfo()
         fetchServerInfo()
     }, 5000)
+
+    // 每3秒更新图表数据
+    chartUpdateInterval = setInterval(() => {
+        updateChartData()
+    }, 3000)
 }
 
 const stopDataUpdate = () => {
@@ -470,17 +476,16 @@ const stopDataUpdate = () => {
         clearInterval(updateInterval)
         updateInterval = null
     }
+    if (chartUpdateInterval) {
+        clearInterval(chartUpdateInterval)
+        chartUpdateInterval = null
+    }
 }
 
 // 组件挂载时初始化
 onMounted(() => {
     initCharts()
     startDataUpdate()
-
-    // 每3秒更新图表数据
-    setInterval(() => {
-        updateChartData()
-    }, 3000)
 })
 
 // 组件卸载时清理

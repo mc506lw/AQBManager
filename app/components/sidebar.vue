@@ -39,6 +39,9 @@
             <li>
                 <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi">插件配置</NuxtLink>
             </li>
+            <li>
+                <NuxtLink to="/theme" active-class="menu-active" class="icon icon-yanse">主题</NuxtLink>
+            </li>
             <li class="menu-title">实用工具</li>
             <li>
                 <NuxtLink to="/widgets" active-class="menu-active" class="icon icon-gongnengdingyi">小工具</NuxtLink>
@@ -47,7 +50,8 @@
         <ul class="menu bg-base-200 rounded-box" v-show=!isCollapsed>
             <li>
                 <NuxtLink to="/" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5" data-tip="仪表盘">
-                    <i class="icon icon-yibiaopan"></i></NuxtLink>
+                    <i class="icon icon-yibiaopan"></i>
+                </NuxtLink>
             </li>
             <li>
                 <NuxtLink to="/playerlist" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
@@ -78,12 +82,16 @@
                     data-tip="插件配置"><i class="icon icon-peizhi"></i></NuxtLink>
             </li>
             <li>
+                <NuxtLink to="/theme" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
+                    data-tip="主题"><i class="icon icon-yanse"></i></NuxtLink>
+            </li>
+            <li>
                 <NuxtLink to="/widgets" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
                     data-tip="小工具"><i class="icon icon-gongnengdingyi"></i></NuxtLink>
-
             </li>
         </ul>
-        <div @click="switchAuth" class="flex items-center transition-all duration-300 ease-in-out mt-auto text-3xl bg-base-100 mx-2 mb-2 rounded-md shadow-2xl cursor-pointer"
+        <div @click="switchAuth"
+            class="flex items-center transition-all duration-300 ease-in-out mt-auto text-3xl bg-base-100 mx-2 mb-2 rounded-md shadow-2xl cursor-pointer"
             :class="{ 'h-10 w-56': isCollapsed, 'h-10 w-12': !isCollapsed }">
             <i class="transition-all duration-300 ease-in-out icon icon-renyuandengji"
                 :class="{ 'ml-4': isCollapsed, 'ml-2.5': !isCollapsed }"></i>
@@ -109,39 +117,53 @@
                 </li>
                 <li class="menu-title">操作菜单</li>
                 <li>
-                    <NuxtLink to="/" active-class="menu-active" class="icon icon-yibiaopan" @click="closeMobileDrawer">仪表盘</NuxtLink>
+                    <NuxtLink to="/" active-class="menu-active" class="icon icon-yibiaopan" @click="closeMobileDrawer">
+                        仪表盘</NuxtLink>
                 </li>
                 <li class="menu-title">玩家管理</li>
                 <li>
-                    <NuxtLink to="/playerlist" active-class="menu-active" class="icon icon-renyuanguanli" @click="closeMobileDrawer">玩家列表</NuxtLink>
+                    <NuxtLink to="/playerlist" active-class="menu-active" class="icon icon-renyuanguanli"
+                        @click="closeMobileDrawer">玩家列表</NuxtLink>
                 </li>
                 <li class="menu-title">系统配置</li>
                 <li>
-                    <NuxtLink to="/botconfig" active-class="menu-active" class="icon icon-jiqiren" @click="closeMobileDrawer">机器人配置</NuxtLink>
+                    <NuxtLink to="/botconfig" active-class="menu-active" class="icon icon-jiqiren"
+                        @click="closeMobileDrawer">机器人配置</NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/groupmanage" active-class="menu-active" class="icon icon-wangluoxitong" @click="closeMobileDrawer">QQ群管理</NuxtLink>
+                    <NuxtLink to="/groupmanage" active-class="menu-active" class="icon icon-wangluoxitong"
+                        @click="closeMobileDrawer">QQ群管理</NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/servers" active-class="menu-active" class="icon icon-fuwuqi" @click="closeMobileDrawer">服务器管理</NuxtLink>
+                    <NuxtLink to="/servers" active-class="menu-active" class="icon icon-fuwuqi"
+                        @click="closeMobileDrawer">服务器管理</NuxtLink>
                 </li>
                 <li class="menu-title">指令控制</li>
                 <li>
-                    <NuxtLink to="/command" active-class="menu-active" class="icon icon-hutong" @click="closeMobileDrawer">远程命令</NuxtLink>
+                    <NuxtLink to="/command" active-class="menu-active" class="icon icon-hutong"
+                        @click="closeMobileDrawer">远程命令</NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/customcommand" active-class="menu-active" class="icon icon-line-commandzhiling" @click="closeMobileDrawer">自定义指令</NuxtLink>
+                    <NuxtLink to="/customcommand" active-class="menu-active" class="icon icon-line-commandzhiling"
+                        @click="closeMobileDrawer">自定义指令</NuxtLink>
                 </li>
                 <li class="menu-title">配置中心</li>
                 <li>
-                    <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi" @click="closeMobileDrawer">插件配置</NuxtLink>
+                    <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi"
+                        @click="closeMobileDrawer">插件配置</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/theme" active-class="menu-active" class="icon icon-yanse" @click="closeMobileDrawer">
+                        主题自定义</NuxtLink>
                 </li>
                 <li class="menu-title">实用工具</li>
                 <li>
-                    <NuxtLink to="/widgets" active-class="menu-active" class="icon icon-gongnengdingyi" @click="closeMobileDrawer">小工具</NuxtLink>
+                    <NuxtLink to="/widgets" active-class="menu-active" class="icon icon-gongnengdingyi"
+                        @click="closeMobileDrawer">小工具</NuxtLink>
                 </li>
                 <li class="mt-auto">
-                    <div @click="switchAuth" class="flex items-center text-3xl bg-base-100 rounded-md shadow-md cursor-pointer p-2">
+                    <div @click="switchAuth"
+                        class="flex items-center text-3xl bg-base-100 rounded-md shadow-md cursor-pointer p-2">
                         <i class="icon icon-renyuandengji"></i>
                         <h1 class="text-2xl ml-2 font-bold">{{ adminname }}</h1>
                     </div>
@@ -164,36 +186,36 @@ const loading = ref(false)
 const mobileDrawerOpen = ref(false)
 
 function switchAuth() {
-  customStore.switchAuth()
+    customStore.switchAuth()
 }
 
 function closeMobileDrawer() {
-  mobileDrawerOpen.value = false
+    mobileDrawerOpen.value = false
 }
 
-const admininfom = async() => {
+const admininfom = async () => {
     try {
-    loading.value = true;
-    const result = await $fetch('/api/auth', {
-      method: 'POST',
-      body: {
-        action: 'get_inform',
-        token: useCookie('auth_token').value,
-      },
-    });
-    if (result.success === true) {
-      adminname.value = result.data.name
-    } else {
-      console.log('获取管理员信息失败', result)
+        loading.value = true;
+        const result = await $fetch('/api/auth', {
+            method: 'POST',
+            body: {
+                action: 'get_inform',
+                token: useCookie('auth_token').value,
+            },
+        });
+        if (result.success === true) {
+            adminname.value = result.data.name
+        } else {
+            console.log('获取管理员信息失败', result)
+        }
+    } catch (err) {
+        console.log('获取管理员信息出错', err)
+    } finally {
+        loading.value = false;
     }
-  } catch (err) {
-    console.log('获取管理员信息出错', err)
-  } finally {
-    loading.value = false;
-  }
 }
 
 onMounted(() => {
-  admininfom()
+    admininfom()
 })
 </script>

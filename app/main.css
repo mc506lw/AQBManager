@@ -1,8 +1,10 @@
 @import "tailwindcss";
 @import url("https://fontsapi.zeoseven.com/92/main/result.css");
+
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark;
+  themes: light --default, dark --prefersdark, cupcake, bumblebee, emerald, corporate, synthwave, retro, cyberpunk, valentine, halloween, garden, forest, aqua, lofi, pastel, fantasy, wireframe, black, luxury, dracula, cmyk, autumn, business, acid, lemonade, night, coffee, winter, dim, sunset, abyss, aqua;
 }
+
 .icon {
   font-family: "iconfont" !important;
   font-style: normal;
@@ -11,8 +13,8 @@
 }
 
 body {
-    font-family: "Smiley Sans Oblique";
-    font-weight: normal;
+  font-family: "Smiley Sans Oblique";
+  font-weight: normal;
 }
 
 .page-enter-active,

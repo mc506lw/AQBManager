@@ -53,7 +53,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>服务器添加成功！3秒后将自动跳转到仪表盘</span>
+          <span>服务器添加成功！1秒后将自动跳转到仪表盘</span>
         </div>
       </div>
     </div>
@@ -98,10 +98,10 @@ const addServer = async () => {
       serverIp.value = ''
       serverToken.value = ''
       
-      // 3秒后跳转到仪表盘
+      // 1秒后跳转到仪表盘
       setTimeout(() => {
         navigateTo('/')
-      }, 3000)
+      }, 1000)
     } else {
       error.value = response.message || '添加服务器失败'
     }

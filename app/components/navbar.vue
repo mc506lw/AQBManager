@@ -15,7 +15,7 @@
         <div class="flex-none">
             <div class="flex">
                 <button class="btn btn-ghost swap swap-rotate" @click="toggleTheme">
-                    <input type="checkbox" class="theme-controller" :checked="currentTheme === 'light'" />
+                    <input type="checkbox" class="theme-controller" :checked="isDarkTheme" />
                     <!-- sun icon -->
                     <svg class="swap-off h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
@@ -37,7 +37,8 @@
                     <div class="drawer-side">
                         <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
                         <div class="bg-base-100 min-h-full">
-                        <ai /></div>
+                            <ai />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -54,12 +55,49 @@ const customStore = useCustomStore()
 const isSidebarCollapsed = computed(() => customStore.isCollapsed)
 const currentTheme = computed(() => customStore.currentTheme)
 
+// 计算是否为暗色主题
+const isDarkTheme = computed(() => {
+  // 获取已保存的亮色和暗色主题
+  const lightTheme = localStorage.getItem('light-theme') || 'light';
+  const darkTheme = localStorage.getItem('dark-theme') || 'dark';
+  
+  // 判断当前主题是否为暗色主题
+  return currentTheme.value === 'dark' || currentTheme.value === darkTheme;
+})
+
 const toggleSidebar = () => {
     customStore.collapse()
     console.log(isSidebarCollapsed.value)
 }
 const toggleTheme = () => {
-    customStore.changeTheme()
-    document.documentElement.setAttribute('data-theme', currentTheme.value);
+    // 获取当前主题
+    const current = currentTheme.value;
+
+    // 获取已保存的亮色和暗色主题
+    const lightTheme = localStorage.getItem('light-theme') || 'light';
+    const darkTheme = localStorage.getItem('dark-theme') || 'dark';
+
+    // 确定要切换到的主题
+    let newTheme;
+    if (current === 'light' || current === lightTheme) {
+        // 当前是亮色主题，切换到暗色主题
+        newTheme = darkTheme;
+    } else {
+        // 当前是暗色主题，切换到亮色主题
+        newTheme = lightTheme;
+    }
+
+    // 应用新主题
+    customStore.changeTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+
+    // 根据当前主题类型保存主题
+    if (current === 'light' || current === lightTheme) {
+        // 当前是亮色主题，保存为暗色主题
+        localStorage.setItem('dark-theme', newTheme);
+    } else {
+        // 当前是暗色主题，保存为亮色主题
+        localStorage.setItem('light-theme', newTheme);
+    }
 }
 </script>
