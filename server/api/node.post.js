@@ -1,5 +1,8 @@
 import { authentication } from '../utils/authmanager'
 import { incrementRequestCount, getRequestCount, resetRequestCount } from '../utils/requestCounter'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+import fs from 'fs'
 
 export default defineEventHandler(async (event) => {
     incrementRequestCount();
@@ -10,12 +13,18 @@ export default defineEventHandler(async (event) => {
 })
 
 async function send_inform() {
+    // 读取 package.json 文件获取版本信息
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const packagePath = join(__dirname, '../../package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+    const panelVersion = packageJson.version;
+    
     const os = await import('os');
     const process = await import('process');
     
     // 获取系统信息
     const nodeVersion = process.version;
-    const panelVersion = 'a1.0.4';
     const nodeVersionInfo = '2.0-alpha.13';
     const username = os.userInfo().username;
     const panelTime = new Date().toLocaleString();

@@ -32,12 +32,15 @@
                 <NuxtLink to="/command" active-class="menu-active" class="icon icon-hutong">远程命令</NuxtLink>
             </li>
             <li>
-                <NuxtLink to="/customcommand" active-class="menu-active" class="icon icon-line-commandzhiling">自定义指令
+                <NuxtLink to="/customcommand" active-class="menu-active" class="icon icon-line-commandzhiling">自定义命令
                 </NuxtLink>
             </li>
             <li class="menu-title">配置中心</li>
             <li>
                 <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi">插件配置</NuxtLink>
+            </li>
+            <li>
+                <NuxtLink to="/script" active-class="menu-active" class="icon icon-script">脚本管理</NuxtLink>
             </li>
             <li>
                 <NuxtLink to="/theme" active-class="menu-active" class="icon icon-yanse">主题</NuxtLink>
@@ -75,11 +78,15 @@
             </li>
             <li>
                 <NuxtLink to="/customcommand" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
-                    data-tip="自定义指令"><i class="icon icon-line-commandzhiling"></i></NuxtLink>
+                    data-tip="自定义命令"><i class="icon icon-line-commandzhiling"></i></NuxtLink>
             </li>
             <li>
                 <NuxtLink to="/config" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
                     data-tip="插件配置"><i class="icon icon-peizhi"></i></NuxtLink>
+            </li>
+            <li>
+                <NuxtLink to="/script" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
+                    data-tip="脚本管理"><i class="icon icon-script"></i></NuxtLink>
             </li>
             <li>
                 <NuxtLink to="/theme" active-class="menu-active" class="tooltip tooltip-right text-sm ml-0.5"
@@ -145,12 +152,16 @@
                 </li>
                 <li>
                     <NuxtLink to="/customcommand" active-class="menu-active" class="icon icon-line-commandzhiling"
-                        @click="closeMobileDrawer">自定义指令</NuxtLink>
+                        @click="closeMobileDrawer">自定义命令</NuxtLink>
                 </li>
                 <li class="menu-title">配置中心</li>
                 <li>
                     <NuxtLink to="/config" active-class="menu-active" class="icon icon-peizhi"
                         @click="closeMobileDrawer">插件配置</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/script" active-class="menu-active" class="icon icon-script" @click="closeMobileDrawer">
+                        脚本管理</NuxtLink>
                 </li>
                 <li>
                     <NuxtLink to="/theme" active-class="menu-active" class="icon icon-yanse" @click="closeMobileDrawer">

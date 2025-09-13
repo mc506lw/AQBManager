@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full">
     <div class="flex flex-col lg:flex-row justify-between w-full border-b border-base-300">
-      <div class="mt-6 ml-6">
+      <div class="my-6 ml-6">
         <div class="text-2xl font-bold">自定义命令配置</div>
         <div class="text-xl">配置自定义命令</div>
       </div>

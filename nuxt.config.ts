@@ -20,7 +20,7 @@ export default defineNuxtConfig({
         { name: 'keywords', content: 'AQQBot, 管理平台, 机器人管理, Nuxt, DaisyUI, Tailwind CSS, WebSocket, 我的世界插件' }
       ],
       link: [
-        { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_uwzovydlvl.css' },
+        { rel: 'stylesheet', href: 'https://at.alicdn.com/t/c/font_4978976_oh7ag7mkjt9.css' },
         { rel: 'icon', type: 'image/x-icon', href: '/logo_LR.png' },
       ]
     },

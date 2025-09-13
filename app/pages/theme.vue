@@ -64,7 +64,7 @@ import { ref, computed, onMounted } from 'vue';
 const lightThemes = [
   'light', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'retro',
   'cyberpunk', 'valentine', 'garden', 'lofi', 'pastel',
-  'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter'
+  'fantasy', 'wireframe', 'cmyk', 'autumn', 'acid', 'lemonade', 'winter', 'mixue', 'luckin'
 ];
 
 // 暗色主题列表
@@ -106,7 +106,9 @@ const themeChineseNames = {
   'winter': '冬日',
   'dim': '昏暗',
   'sunset': '日落',
-  'abyss': '深渊'
+  'abyss': '深渊',
+  'mixue': '蜜雪',
+  'luckin': '瑞幸'
 };
 
 // 当前显示的主题类型
