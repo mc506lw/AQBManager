@@ -19,9 +19,10 @@ NODE_VERSION=$(node --version)
 echo "当前目录: $(pwd)"
 echo "打开地址: http://localhost:$PORT/"
 echo "---------------"
+echo "适用于本机自带Node.js环境"
 echo "报错请加入QQ群: 669737143"
 
-PORT=$PORT "./node-v22.18.0-linux-x64/bin/node" .output/server/index.mjs
+PORT=$PORT node .output/server/index.mjs
 
 echo "按回车键继续..."
 read

@@ -14,10 +14,11 @@ if defined PORT (
 echo ======================================== 
 echo 正在启动AQQBot-Web a1.0.4 
 echo ======================================== 
+echo 适用于本机自带Node.js环境 
 echo 当前目录: %CD% 
 echo 打开地址: http://localhost:%PORT%/ 
 echo --------------- 
 echo 报错请加入QQ群: 669737143 
 
-"./node-v22.18.0-win-x64/node.exe" .output/server/index.mjs
+node .output/server/index.mjs
 pause

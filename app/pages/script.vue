@@ -39,10 +39,33 @@
           </div>
         </div>
 
+        <!-- 搜索和筛选区域 -->
+        <div class="mb-4 flex flex-col md:flex-row gap-2">
+          <input 
+            type="text" 
+            placeholder="搜索插件..." 
+            class="input input-bordered w-full md:w-64" 
+            v-model="searchQuery"
+          />
+          <select 
+            class="select select-bordered w-full md:w-64" 
+            v-model="selectedAuthor"
+          >
+            <option value="">所有作者</option>
+            <option 
+              v-for="author in topAuthors" 
+              :key="author" 
+              :value="author"
+            >
+              {{ author }}
+            </option>
+          </select>
+        </div>
+
         <!-- 插件列表 -->
-        <div v-if="plugins && plugins.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-if="filteredPlugins && filteredPlugins.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div 
-            v-for="plugin in plugins" 
+            v-for="plugin in filteredPlugins" 
             :key="plugin.name" 
             class="card bg-base-200 card-sm"
           >
@@ -100,6 +123,8 @@ const plugins = ref([])
 const pluginRepoInfo = ref({})
 const lastUpdate = ref(0)
 const loading = ref(false)
+const searchQuery = ref('')
+const selectedAuthor = ref('')
 
 // Toast 相关
 const toastMessage = ref('')
@@ -116,6 +141,46 @@ const toastClass = computed(() => {
     default:
       return 'alert-info'
   }
+})
+
+// 计算属性：过滤后的插件列表
+const filteredPlugins = computed(() => {
+  let result = plugins.value
+  
+  // 按搜索关键词过滤
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(plugin => 
+      plugin.name.toLowerCase().includes(query) || 
+      plugin.description.toLowerCase().includes(query)
+    )
+  }
+  
+  // 按作者过滤
+  if (selectedAuthor.value) {
+    result = result.filter(plugin => plugin.author === selectedAuthor.value)
+  }
+  
+  return result
+})
+
+// 计算属性：获取插件最多的前10个作者
+const topAuthors = computed(() => {
+  if (!plugins.value || plugins.value.length === 0) return []
+  
+  // 统计每个作者的插件数量
+  const authorCount = {}
+  plugins.value.forEach(plugin => {
+    if (plugin.author) {
+      authorCount[plugin.author] = (authorCount[plugin.author] || 0) + 1
+    }
+  })
+  
+  // 按插件数量排序并取前10个
+  return Object.entries(authorCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([author]) => author)
 })
 
 const showToastMessage = (message, type) => {

@@ -11,7 +11,13 @@
       </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 m-8">
-      <div v-for="server in servers" :key="server.uuid" class="card bg-base-100 card-lg shadow-sm">
+      <!-- 加载动画 -->
+      <div v-if="loading" class="flex justify-center items-center h-64 w-full">
+        <span class="loading loading-spinner loading-lg"></span>
+      </div>
+      
+      <!-- 服务器卡片 -->
+      <div v-else v-for="server in servers" :key="server.uuid" class="card bg-base-100 card-lg shadow-sm">
         <div class="card-body">
           <div class="justify-between flex">
             <h2 class="card-title">{{ server.name }}</h2>
@@ -135,6 +141,7 @@ const editedserverip = ref('')
 const editedservertoken = ref('')
 const editedservername = ref('')
 const deletedserver = ref('')
+const loading = ref(false) // 添加加载状态
 
 // 打码函数
 const maskToken = (token) => {
@@ -164,6 +171,7 @@ const deleteserver = async (server) => {
 }
 
 const getservers = async () => {
+  loading.value = true // 开始加载
   try {
     const result = await $fetch('/api/servers', {
       method: 'POST',
@@ -177,6 +185,9 @@ const getservers = async () => {
   }
   catch (err) {
     console.error(err)
+  }
+  finally {
+    loading.value = false // 完成加载
   }
 }
 
