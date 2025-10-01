@@ -195,16 +195,22 @@ const showToastMessage = (message, type) => {
 // 获取服务器列表
 const getservers = async () => {
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'get_servers',
-        token: token.value
-      },
-    })
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // 模拟服务器数据
+    const result = {
+      success: true,
+      servers: [
+        { uuid: 'server-1', name: '生存服务器', ip: '192.168.1.101' },
+        { uuid: 'server-2', name: '创造服务器', ip: '192.168.1.102' },
+        { uuid: 'server-3', name: '冒险服务器', ip: '192.168.1.103' }
+      ]
+    };
+    
     if (result.success) {
       servers.value = result.servers
-      console.log('服务器列表获取成功')
+      console.log('服务器列表获取成功（模拟数据）')
     } else {
       showToastMessage(`服务器列表获取失败: ${result.msg}`, 'error')
     }
@@ -219,13 +225,27 @@ const refreshPlugins = async () => {
   
   loading.value = true
   try {
-    const result = await $fetch('/api/plugin', {
-      method: 'POST',
-      body: {
-        action: 'update',
-        token: token.value
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // 模拟插件数据
+    const result = {
+      success: true,
+      data: {
+        plugins: [
+          { name: '插件1', description: '提供功能1', author: 'Admin', version: '1.0.0' },
+          { name: '插件2', description: '提供功能2', author: 'Developer', version: '2.1.3' },
+          { name: '插件3', description: '提供功能3', author: 'Builder', version: '1.5.2' },
+          { name: '插件4', description: '提供功能4', author: 'Security', version: '3.0.1' },
+          { name: '插件5', description: '提供功能5', author: 'Communicator', version: '1.2.4' }
+        ],
+        name: '默认插件仓库',
+        author: '系统管理员',
+        description: '默认的插件仓库，包含常用插件',
+        website: 'https://example.com'
       },
-    })
+      lastUpdate: Date.now()
+    };
     
     if (result.success) {
       plugins.value = result.data.plugins || []
@@ -236,7 +256,7 @@ const refreshPlugins = async () => {
         website: result.data.website
       }
       lastUpdate.value = result.lastUpdate || Date.now()
-      showToastMessage('插件数据已更新', 'success')
+      showToastMessage('插件数据已更新（模拟数据）', 'success')
     } else {
       showToastMessage(`插件数据更新失败: ${result.message}`, 'error')
     }
@@ -253,13 +273,27 @@ const getPlugins = async () => {
   
   loading.value = true
   try {
-    const result = await $fetch('/api/plugin', {
-      method: 'POST',
-      body: {
-        action: 'get',
-        token: token.value
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // 模拟插件数据
+    const result = {
+      success: true,
+      data: {
+        plugins: [
+          { name: '插件1', description: '提供功能1', author: 'Admin', version: '1.0.0' },
+          { name: '插件2', description: '提供功能2', author: 'Developer', version: '2.1.3' },
+          { name: '插件3', description: '提供功能3', author: 'Builder', version: '1.5.2' },
+          { name: '插件4', description: '提供功能4', author: 'Security', version: '3.0.1' },
+          { name: '插件5', description: '提供功能5', author: 'Communicator', version: '1.2.4' }
+        ],
+        name: '默认插件仓库',
+        author: '系统管理员',
+        description: '默认的插件仓库，包含常用插件',
+        website: 'https://example.com'
       },
-    })
+      lastUpdate: Date.now()
+    };
     
     if (result.success) {
       plugins.value = result.data.plugins || []

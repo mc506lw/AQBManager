@@ -206,16 +206,22 @@ const showToastMessage = (message, type) => {
 // 获取服务器列表
 const getservers = async () => {
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'get_servers',
-        token: token.value
-      },
-    });
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // 模拟服务器数据
+    const result = {
+      success: true,
+      servers: [
+        { uuid: 'server-1', name: '生存服务器' },
+        { uuid: 'server-2', name: '创造服务器' },
+        { uuid: 'server-3', name: '冒险服务器' }
+      ]
+    };
+    
     if (result.success) {
       servers.value = result.servers;
-      console.log('服务器列表获取成功');
+      console.log('服务器列表获取成功（模拟数据）');
     } else {
       showToastMessage(`服务器列表获取失败: ${result.msg}`, 'error');
     }
@@ -237,16 +243,37 @@ const loadCustomCommands = async () => {
   if (!selectedServer.value) return;
   
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'do_action',
-        token: token.value,
-        uuid: selectedServer.value,
-        action_name: '/api/v1/custom/get',
-        params: {}
-      },
-    });
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // 模拟自定义命令配置数据
+    const result = {
+      success: true,
+      response: {
+        custom_commands: {
+          'help': {
+            enable: true,
+            command: ['say 帮助信息'],
+            execute: ['help'],
+            unbind_execute: ['say 请先绑定账户'],
+            choose_account: 0,
+            output: ['帮助命令已执行'],
+            unbind_output: ['请先绑定账户'],
+            format: true
+          },
+          'tp': {
+            enable: true,
+            command: ['tp {player} {x} {y} {z}'],
+            execute: ['tp'],
+            unbind_execute: ['say 请先绑定账户'],
+            choose_account: 1,
+            output: ['传送命令已执行'],
+            unbind_output: ['请先绑定账户'],
+            format: true
+          }
+        }
+      }
+    };
     
     if (result.success) {
       // 处理命令列表数据，将数组转换为多行文本
@@ -262,7 +289,7 @@ const loadCustomCommands = async () => {
         };
       }
       customCommands.value = processedCommands;
-      showToastMessage('配置加载成功', 'success');
+      showToastMessage('配置加载成功（模拟数据）', 'success');
     } else {
       showToastMessage(`配置加载失败: ${result.msg}`, 'error');
     }
@@ -276,6 +303,9 @@ const saveCommand = async (key) => {
   if (!selectedServer.value || !customCommands.value[key]) return;
   
   try {
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     // 处理数据，将多行文本转换为数组
     const commandData = {
       ...customCommands.value[key],
@@ -286,22 +316,14 @@ const saveCommand = async (key) => {
       unbind_output: customCommands.value[key].unbind_output.split('\n').filter(output => output.trim() !== '')
     };
     
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'do_action',
-        token: token.value,
-        uuid: selectedServer.value,
-        action_name: '/api/v1/custom/set',
-        params: {
-          key: key,
-          ...commandData
-        }
-      },
-    });
+    // 模拟保存成功的响应
+    const result = {
+      success: true,
+      msg: '命令配置保存成功'
+    };
     
     if (result.success) {
-      showToastMessage('命令配置保存成功', 'success');
+      showToastMessage('命令配置保存成功（模拟数据）', 'success');
     } else {
       showToastMessage(`命令配置保存失败: ${result.msg}`, 'error');
     }
@@ -315,32 +337,19 @@ const deleteCommand = async (key) => {
   if (!selectedServer.value) return;
   
   try {
-    // 发送空配置来删除命令
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'do_action',
-        token: token.value,
-        uuid: selectedServer.value,
-        action_name: '/api/v1/custom/set',
-        params: {
-          key: key,
-          enable: false,
-          command: [],
-          execute: [],
-          unbind_execute: [],
-          choose_account: 0,
-          output: [],
-          unbind_output: [],
-          format: false
-        }
-      },
-    });
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // 模拟删除成功的响应
+    const result = {
+      success: true,
+      msg: '命令删除成功'
+    };
     
     if (result.success) {
       // 从本地状态中删除
       delete customCommands.value[key];
-      showToastMessage('命令删除成功', 'success');
+      showToastMessage('命令删除成功（模拟数据）', 'success');
     } else {
       showToastMessage(`命令删除失败: ${result.msg}`, 'error');
     }

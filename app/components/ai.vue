@@ -128,221 +128,73 @@ const sendMessage = async () => {
   const userMessage = input.value
   input.value = ''
 
-  try {
-    console.log('发送消息到AI');
-    // 发送消息到AI
-    const response = await fetch('/api/ai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'chat',
-        messages: messages.value,
-        token: useCookie('auth_token').value,
-        question: userMessage
-      })
-    });
-    console.log('收到AI响应:', response.body);
-
-    // 检查响应是否包含流式数据
-    if (response.body && typeof response.body.getReader === 'function') {
-      // 处理流式响应
-      messages.value.push({ role: 'assistant', content: '' });
-      const aiMessageIndex = messages.value.length - 1;
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      try {
-        let accumulatedData = '';
-        let messageContent = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          // 解码数据
-          const chunk = decoder.decode(value);
-          accumulatedData += chunk;
-
-          // 处理完整的数据行
-          const lines = accumulatedData.split('\n');
-          accumulatedData = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') break;
-              try {
-                const parsed = JSON.parse(data);
-                // 更新AI消息内容
-                if (parsed.choices && parsed.choices[0].delta && parsed.choices[0].delta.content) {
-                  messageContent += parsed.choices[0].delta.content;
-                  messages.value[aiMessageIndex].content = messageContent;
-                  // 在下次DOM更新后滚动到底部
-                  nextTick(() => {
-                    scrollToBottom()
-                  })
-                }
-              } catch (e) {
-                // 如果不是JSON格式，直接添加到内容中
-                messageContent += data;
-                messages.value[aiMessageIndex].content = messageContent;
-                // 在下次DOM更新后滚动到底部
-                nextTick(() => {
-                  scrollToBottom()
-                })
-              }
-            }
-          }
-        }
-      } finally {
-        reader.releaseLock();
-      }
-      return;
-    }
-  } catch (error) {
-    console.error('发送消息时出错:', error);
-
-    // 检查错误是否包含流式数据
-    if (error && typeof error === 'object' && error.body && typeof error.body.getReader === 'function') {
-      // 处理流式响应错误
-      messages.value.push({ role: 'assistant', content: '' });
-      const aiMessageIndex = messages.value.length - 1;
-      const reader = error.body.getReader();
-      const decoder = new TextDecoder();
-
-      try {
-        let accumulatedData = '';
-        let messageContent = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          // 解码数据
-          const chunk = decoder.decode(value);
-          accumulatedData += chunk;
-
-          // 处理完整的数据行
-          const lines = accumulatedData.split('\n');
-          accumulatedData = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') break;
-              try {
-                const parsed = JSON.parse(data);
-                // 更新AI消息内容
-                if (parsed.choices && parsed.choices[0].delta && parsed.choices[0].delta.content) {
-                  messageContent += parsed.choices[0].delta.content;
-                  messages.value[aiMessageIndex].content = messageContent;
-                  // 在下次DOM更新后滚动到底部
-                  nextTick(() => {
-                    scrollToBottom()
-                  })
-                }
-              } catch (e) {
-                // 如果不是JSON格式，直接添加到内容中
-                messageContent += data;
-                messages.value[aiMessageIndex].content = messageContent;
-                // 在下次DOM更新后滚动到底部
-                nextTick(() => {
-                  scrollToBottom()
-                })
-              }
-            }
-          }
-        }
-      } finally {
-        reader.releaseLock();
-      }
-      return;
-    }
-
-    messages.value.push({ role: 'assistant', content: `抱歉，处理您的请求时出现错误。错误信息: ${error.message || error}` });
+  // 模拟AI回复延迟
+  messages.value.push({ role: 'assistant', content: '' });
+  const aiMessageIndex = messages.value.length - 1;
+  
+  // 模拟AI思考时间
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // 模拟AI回复内容
+  const mockResponses = [
+    "这是一个模拟的AI回复。在实际应用中，这里会连接到真正的AI服务来处理您的问题。",
+    "感谢您的提问！这是来自模拟AI的回复。在真实环境中，您的问题会被发送到AI模型进行处理。",
+    "您好！我是模拟AI助手。在生产环境中，我会将您的问题传递给真实的AI服务来获得准确答案。",
+    "这是一个演示环境，AI回复是预设的模拟内容。在实际部署中，您将获得来自真实AI模型的个性化回复。",
+    "模拟AI在此为您服务！在正式版本中，您的问题将由强大的AI引擎实时分析和回答。"
+  ];
+  
+  const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+  
+  // 流式显示回复
+  let accumulatedContent = '';
+  for (let i = 0; i < randomResponse.length; i++) {
+    accumulatedContent += randomResponse[i];
+    messages.value[aiMessageIndex].content = accumulatedContent;
+    
+    // 滚动到底部
+    nextTick(() => {
+      scrollToBottom()
+    })
+    
+    // 模拟打字效果延迟
+    await new Promise(resolve => setTimeout(resolve, 20));
   }
 }
 
 const getAPIConfig = async () => {
-  try {
-    const response = await $fetch('/api/ai', {
-      method: 'POST',
-      body: {
-        action: 'get_api',
-        token: useCookie('auth_token').value
-      }
-    })
-
-    // 检查响应是否为JSON格式
-    if (typeof response === 'string') {
-      const result = JSON.parse(response)
-      if (result.success) {
-        api_url.value = result.data.api_url
-        api_key.value = result.data.api_key
-        ai_model.value = result.data.model
-        max_token.value = result.data.max_tokens
-      } else {
-        console.error('获取API配置失败:', result.msg)
-      }
-    } else if (response.success) {
-      // 如果响应已经是对象格式
-      api_url.value = response.data.api_url
-      api_key.value = response.data.api_key
-      ai_model.value = response.data.model
-      max_token.value = response.data.max_tokens
-    } else {
-      console.error('获取API配置失败:', response.msg)
-    }
-  } catch (error) {
-    console.error('获取API配置时出错:', error)
-  }
+  // 模拟API配置数据
+  api_url.value = 'https://api.example.com/v1/chat/completions'
+  api_key.value = 'sk-****************************************'
+  ai_model.value = 'gpt-3.5-turbo'
+  max_token.value = 15000
+  
+  console.log('使用模拟API配置')
 }
 
 const setai = async () => {
   errorMsg.value = ''
 
-  // 首先验证API配置
-  try {
-    const verifyResponse = await $fetch('/api/ai', {
-      method: 'POST',
-      body: {
-        action: 'verify_api',
-        token: useCookie('auth_token').value,
-        api_url: api_url.value,
-        api_key: api_key.value,
-        model: ai_model.value,
-        max_tokens: max_token.value
-      }
-    })
-    if (!verifyResponse.success) {
-      errorMsg.value = verifyResponse.msg
-      return
-    }
-
-    // 验证成功后保存配置
-    const setResponse = await $fetch('/api/ai', {
-      method: 'POST',
-      body: {
-        action: 'set_api',
-        token: useCookie('auth_token').value,
-        api_url: api_url.value,
-        api_key: api_key.value,
-        model: ai_model.value,
-        max_tokens: max_token.value
-      }
-    })
-
-    if (!setResponse.success) {
-      errorMsg.value = setResponse.msg
-    } else {
-      // 配置保存成功，重新加载配置并关闭对话框
-      await getAPIConfig()
-      document.getElementById('aiset').close()
-    }
-  } catch (error) {
-    console.error('设置API配置时出错:', error)
-    errorMsg.value = '设置API配置时出错: ' + error.message
+  // 模拟API配置验证
+  if (!api_url.value || !api_key.value || !ai_model.value || !max_token.value) {
+    errorMsg.value = '请填写所有必填字段'
+    return
   }
+
+  // 模拟验证过程
+  await new Promise(resolve => setTimeout(resolve, 800))
+  
+  // 模拟验证成功
+  console.log('模拟API配置验证成功')
+  
+  // 模拟保存配置
+  await new Promise(resolve => setTimeout(resolve, 500))
+  
+  // 配置保存成功，重新加载配置并关闭对话框
+  await getAPIConfig()
+  document.getElementById('aiset').close()
+  
+  console.log('模拟API配置保存成功')
 }
 </script>
 

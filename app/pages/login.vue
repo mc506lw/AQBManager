@@ -60,29 +60,36 @@ const handleLogin = async () => {
 
   try {
     loading.value = true;
-    const result = await $fetch('/api/auth', {
-      method: 'POST',
-      body: {
-        action: 'login',
-        name: username.value,
-        password: password.value,
-      },
-    });
-    if (result.success === true) {
-      const tokenCookie = useCookie('auth_token', {
-        maxAge: 60 * 60 * 24 * 30, // 30天过期（秒）
-        sameSite: true,
-        secure: false // 如果是HTTPS环境，设置为true
-      })
-      tokenCookie.value = result.token
-      // 验证成功，跳转到主页
-      navigateTo('/')
+    // 使用模拟数据替代真实API调用
+    // 模拟认证过程
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 模拟网络延迟
+    
+    // 简单的模拟认证逻辑
+    if (username.value === 'admin' && password.value === 'admin') {
+      const result = {
+        success: true,
+        token: 'mock-auth-token-12345'
+      };
+      
+      if (result.success === true) {
+        const tokenCookie = useCookie('auth_token', {
+          maxAge: 60 * 60 * 24 * 30, // 30天过期（秒）
+          sameSite: true,
+          secure: false // 如果是HTTPS环境，设置为true
+        })
+        tokenCookie.value = result.token
+        // 验证成功，跳转到主页
+        navigateTo('/')
+      } else {
+        error.value = result.msg || '认证失败';
+      }
     } else {
-      error.value = result.msg;
+      error.value = '用户名或密码错误';
     }
   } catch (err) {
     error.value = err.message;
   } finally {
     loading.value = false;
-  }}
+  }
+}
 </script>

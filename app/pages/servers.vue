@@ -128,8 +128,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { mockServers, mockAuthToken } from '~/utils/mockData';
 
-const servers = ref([]);
+const servers = ref([...mockServers]); // 使用模拟数据初始化
 const token = useCookie('auth_token');
 const newserverip = ref('');
 const newservertoken = ref('');
@@ -173,14 +174,9 @@ const deleteserver = async (server) => {
 const getservers = async () => {
   loading.value = true // 开始加载
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'get_servers',
-        token: token.value
-      },
-    })
-    servers.value = result.servers
+    // 使用模拟数据替代真实API调用
+    await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
+    servers.value = [...mockServers]
     console.log(servers.value)
   }
   catch (err) {
@@ -204,31 +200,35 @@ const editserver = (server) => {
 
 const doedit = async () => {
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'edit',
-        token: token.value,
-        uuid: editedserver.value,
-        serverip: editedserverip.value,
-        servertoken: editedservertoken.value,
-        servername: editedservername.value,
-
+    // 使用模拟数据替代真实API调用
+    await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
+    
+    // 模拟编辑服务器的逻辑
+    const serverIndex = servers.value.findIndex(s => s.uuid === editedserver.value)
+    if (serverIndex !== -1) {
+      servers.value[serverIndex].ip = editedserverip.value
+      servers.value[serverIndex].token = editedservertoken.value
+      servers.value[serverIndex].name = editedservername.value
+      
+      const result = {
+        success: true
       }
-    })
-    if (result.success) {
-      editedserver.value = ''
-      editedserverip.value = ''
-      editedservertoken.value = ''
-      editedservername.value = ''
-      warningmsg1.value = ''
-      getservers()
-      editserver1.close()
+      
+      if (result.success) {
+        editedserver.value = ''
+        editedserverip.value = ''
+        editedservertoken.value = ''
+        editedservername.value = ''
+        warningmsg1.value = ''
+        getservers()
+        editserver1.close()
+      }
+      else {
+        warningmsg2.value = result.msg || '编辑失败'
+      }
+    } else {
+      warningmsg2.value = '未找到要编辑的服务器'
     }
-    else {
-      warningmsg2.value = result.msg
-    }
-
   }
   catch (err) {
     console.error(err)
@@ -238,22 +238,29 @@ const doedit = async () => {
 
 const dodelete = async () => {
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'delete',
-        token: token.value,
-        uuid: deletedserver.value.uuid
+    // 使用模拟数据替代真实API调用
+    await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
+    
+    // 模拟删除服务器的逻辑
+    const serverIndex = servers.value.findIndex(s => s.uuid === deletedserver.value.uuid)
+    if (serverIndex !== -1) {
+      servers.value.splice(serverIndex, 1)
+      
+      const result = {
+        success: true
       }
-    })
-    if (result.success) {
-      deletedserver.value = ''
-      warningmsg3.value = ''
-      getservers()
-      deleteserver1.close()
-    }
-    else {
-      warningmsg3.value = result.msg
+      
+      if (result.success) {
+        deletedserver.value = ''
+        warningmsg3.value = ''
+        getservers()
+        deleteserver1.close()
+      }
+      else {
+        warningmsg3.value = result.msg || '删除失败'
+      }
+    } else {
+      warningmsg3.value = '未找到要删除的服务器'
     }
   }
   catch (err) {
@@ -264,24 +271,36 @@ const dodelete = async () => {
 
 const addserver = async () => {
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'add',
-        token: token.value,
-        serverip: newserverip.value,
-        servertoken: newservertoken.value
+    // 使用模拟数据替代真实API调用
+    await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
+    
+    // 模拟添加服务器的逻辑
+    if (newserverip.value && newservertoken.value) {
+      const newServer = {
+        uuid: 'server-' + (servers.value.length + 1).toString().padStart(3, '0'),
+        name: '新服务器 ' + (servers.value.length + 1),
+        ip: newserverip.value,
+        token: newservertoken.value
       }
-    })
-    if (result.success) {
-      newserverip.value = ''
-      newservertoken.value = ''
-      warningmsg1.value = ''
-      getservers()
-      addserver1.close()
-    }
-    else {
-      warningmsg1.value = result.msg
+      
+      servers.value.push(newServer)
+      
+      const result = {
+        success: true
+      }
+      
+      if (result.success) {
+        newserverip.value = ''
+        newservertoken.value = ''
+        warningmsg1.value = ''
+        getservers()
+        addserver1.close()
+      }
+      else {
+        warningmsg1.value = result.msg || '添加失败'
+      }
+    } else {
+      warningmsg1.value = '请填写完整的服务器信息'
     }
   }
   catch (err) {

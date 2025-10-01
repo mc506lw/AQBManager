@@ -91,6 +91,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { mockServers, mockOneBotConfig, mockConnectionStatus } from '~/utils/mockData';
 
 const token = useCookie('auth_token');
 const servers = ref([]);
@@ -135,19 +136,12 @@ const showToastMessage = (message, type) => {
 // 获取服务器列表
 const getservers = async () => {
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'get_servers',
-        token: token.value
-      },
-    });
-    if (result.success) {
-      servers.value = result.servers;
-      console.log('服务器列表获取成功');
-    } else {
-      showToastMessage(`服务器列表获取失败: ${result.msg}`, 'error');
-    }
+    // 模拟API延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // 使用模拟数据
+    servers.value = mockServers;
+    console.log('服务器列表获取成功（模拟数据）');
   } catch (error) {
     showToastMessage(`获取服务器列表时发生错误: ${error.message}`, 'error');
   }
@@ -167,27 +161,12 @@ const loadOneBotConfig = async () => {
   if (!selectedServer.value) return;
   
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'do_action',
-        token: token.value,
-        uuid: selectedServer.value,
-        action_name: '/api/v1/onebot/info',
-        params: {}
-      },
-    });
+    // 模拟API延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
     
-    if (result.success) {
-      oneBotConfig.value = {
-        host: result.response.host || '',
-        port: result.response.port || 3001,
-        access_token: result.response.access_token || ''
-      };
-      showToastMessage('配置加载成功', 'success');
-    } else {
-      showToastMessage(`配置加载失败: ${result.msg}`, 'error');
-    }
+    // 使用模拟数据
+    oneBotConfig.value = { ...mockOneBotConfig };
+    showToastMessage('配置加载成功（模拟数据）', 'success');
   } catch (error) {
     showToastMessage(`加载配置时发生错误: ${error.message}`, 'error');
   }
@@ -198,26 +177,15 @@ const saveConfig = async () => {
   if (!selectedServer.value) return;
   
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'do_action',
-        token: token.value,
-        uuid: selectedServer.value,
-        action_name: '/api/v1/onebot/set',
-        params: {
-          host: oneBotConfig.value.host,
-          port: parseInt(oneBotConfig.value.port),
-          access_token: oneBotConfig.value.access_token
-        }
-      },
-    });
+    // 模拟API延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
     
-    if (result.success) {
-      showToastMessage('配置保存成功', 'success');
-    } else {
-      showToastMessage(`配置保存失败: ${result.msg}`, 'error');
-    }
+    // 使用模拟数据保存配置
+    mockOneBotConfig.host = oneBotConfig.value.host;
+    mockOneBotConfig.port = parseInt(oneBotConfig.value.port);
+    mockOneBotConfig.access_token = oneBotConfig.value.access_token;
+    
+    showToastMessage('配置保存成功（模拟数据）', 'success');
   } catch (error) {
     showToastMessage(`保存配置时发生错误: ${error.message}`, 'error');
   }
@@ -228,23 +196,12 @@ const checkConnection = async () => {
   if (!selectedServer.value) return;
   
   try {
-    const result = await $fetch('/api/servers', {
-      method: 'POST',
-      body: {
-        action: 'do_action',
-        token: token.value,
-        uuid: selectedServer.value,
-        action_name: '/api/v1/onebot/status',
-        params: {}
-      },
-    });
+    // 模拟API延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
     
-    if (result.success) {
-      isConnected.value = result.response.connected || false;
-      showToastMessage(`连接状态检查成功: ${isConnected.value ? '已连接' : '未连接'}`, 'success');
-    } else {
-      showToastMessage(`连接状态检查失败: ${result.msg}`, 'error');
-    }
+    // 使用模拟数据
+    isConnected.value = mockConnectionStatus.connected;
+    showToastMessage(`连接状态检查成功（模拟数据）: ${isConnected.value ? '已连接' : '未连接'}`, 'success');
   } catch (error) {
     showToastMessage(`检查连接状态时发生错误: ${error.message}`, 'error');
   }

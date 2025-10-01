@@ -132,6 +132,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { mockServers, mockGroups, mockGroupMembers, mockBoundUsers } from '~/utils/mockData';
 
 const token = useCookie('auth_token');
 const servers = ref([]);
@@ -171,116 +172,106 @@ const showToastMessage = (type, message) => {
 
 // 获取服务器列表
 const getservers = async () => {
-    const result = await $fetch('/api/servers', {
-        method: 'POST',
-        body: {
-            action: 'get_servers',
-            token: token.value
-        },
-    });
-    if (result.success) {
-        servers.value = result.servers;
-        console.log('服务器列表获取成功');
-        showToastMessage('success', '服务器列表获取成功');
-    } else {
-        console.error(`服务器列表获取失败: ${result.msg}`);
-        showToastMessage('error', `服务器列表获取失败: ${result.msg}`);
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        servers.value = mockServers;
+        console.log('服务器列表获取成功（模拟数据）');
+        showToastMessage('success', '服务器列表获取成功（模拟数据）');
+    } catch (error) {
+        console.error(`获取服务器列表时发生错误: ${error.message}`);
+        showToastMessage('error', `获取服务器列表时发生错误: ${error.message}`);
     }
 };
 
 // 获取服务器的群组列表
 const getServerGroups = async (serverUuid) => {
-    const result = await $fetch('/api/servers', {
-        method: 'POST',
-        body: {
-            action: 'do_action',
-            token: token.value,
-            uuid: serverUuid,
-            action_name: '/api/v1/enable_groups'
-        },
-    });
-    if (result.success && result.response && Array.isArray(result.response.groups)) {
-        // 初始化该服务器的群组信息
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        // 初始化groups对象中的服务器条目
         if (!groups.value[serverUuid]) {
             groups.value[serverUuid] = [];
         }
-        groups.value[serverUuid] = result.response.groups;
-        console.log(`获取到服务器 ${serverUuid} 的群组列表`);
-        showToastMessage('success', `获取到服务器 ${serverUuid} 的群组列表`);
-
-        // 获取每个群组的成员列表
-        for (const group of result.response.groups) {
-            await getGroupMembers(serverUuid, group);
-        }
-    } else {
-        console.error(`获取服务器 ${serverUuid} 群组失败: ${result.msg}`);
-        showToastMessage('error', `获取服务器 ${serverUuid} 群组失败: ${result.msg}`);
+        // 更新群组信息
+        groups.value[serverUuid] = mockGroups[serverUuid] || [];
+        console.log(`服务器 ${serverUuid} 的群组列表获取成功（模拟数据）`);
+        showToastMessage(`服务器 ${serverUuid} 的群组列表获取成功（模拟数据）`, 'success');
+    } catch (error) {
+        console.error(`获取服务器 ${serverUuid} 的群组列表时发生错误: ${error.message}`);
+        showToastMessage(`获取服务器 ${serverUuid} 的群组列表时发生错误: ${error.message}`, 'error');
     }
 };
 
 // 获取群组成员列表
 const getGroupMembers = async (serverUuid, groupId) => {
-    const result = await $fetch('/api/servers', {
-        method: 'POST',
-        body: {
-            action: 'do_action',
-            token: token.value,
-            uuid: serverUuid,
-            action_name: '/api/v1/enable_groups/users',
-            params: { group_id: groupId }
-        },
-    });
-    if (result.success && result.response) {
-        // 初始化该群组的成员信息
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        // 初始化groupMembers对象中的条目
         if (!groupMembers.value[groupId]) {
             groupMembers.value[groupId] = {};
         }
-        groupMembers.value[groupId] = result.response;
-        console.log(`获取到群组 ${groupId} 的成员列表`);
-        showToastMessage('success', `获取到群组 ${groupId} 的成员列表`);
-    } else {
-        console.error(`获取群组 ${groupId} 成员列表失败: ${result.msg}`);
-        showToastMessage('error', `获取群组 ${groupId} 成员列表失败: ${result.msg}`);
+        // 更新成员信息
+        groupMembers.value[groupId] = mockGroupMembers[groupId] || {};
+        console.log(`群组 ${groupId} 的成员列表获取成功（模拟数据）`);
+        showToastMessage(`群组 ${groupId} 的成员列表获取成功（模拟数据）`, 'success');
+    } catch (error) {
+        console.error(`获取群组 ${groupId} 的成员列表时发生错误: ${error.message}`);
+        showToastMessage(`获取群组 ${groupId} 的成员列表时发生错误: ${error.message}`, 'error');
     }
 };
 
 // 获取服务器的已绑定用户
 const getBoundUsers = async (serverUuid) => {
-    const result = await $fetch('/api/servers', {
-        method: 'POST',
-        body: {
-            action: 'do_action',
-            token: token.value,
-            uuid: serverUuid,
-            action_name: '/api/v1/users'
-        },
-    });
-    if (result.success && result.response) {
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
         // 初始化该服务器的已绑定用户信息
         if (!boundUsers.value[serverUuid]) {
             boundUsers.value[serverUuid] = {};
         }
-        boundUsers.value[serverUuid] = result.response;
-        console.log(`获取到服务器 ${serverUuid} 的已绑定用户`);
-        showToastMessage('success', `获取到服务器 ${serverUuid} 的已绑定用户`);
-    } else {
-        console.error(`获取服务器 ${serverUuid} 已绑定用户失败: ${result.msg}`);
-        showToastMessage('error', `获取服务器 ${serverUuid} 已绑定用户失败: ${result.msg}`);
+        // 更新已绑定用户信息
+        boundUsers.value[serverUuid] = mockBoundUsers[serverUuid] || {};
+        console.log(`服务器 ${serverUuid} 的已绑定用户获取成功（模拟数据）`);
+        showToastMessage(`服务器 ${serverUuid} 的已绑定用户获取成功（模拟数据）`, 'success');
+    } catch (error) {
+        console.error(`获取服务器 ${serverUuid} 的已绑定用户时发生错误: ${error.message}`);
+        showToastMessage(`获取服务器 ${serverUuid} 的已绑定用户时发生错误: ${error.message}`, 'error');
     }
 };
 
 // 获取所有数据
 const getAllData = async () => {
-    await getservers();
+    try {
+        await getservers();
 
-    // 遍历所有服务器，获取群组和已绑定用户信息
-    for (const server of servers.value) {
-        await getServerGroups(server.uuid);
-        await getBoundUsers(server.uuid);
+        // 遍历所有服务器，获取群组和已绑定用户信息
+        for (const server of servers.value) {
+            await getServerGroups(server.uuid);
+            await getBoundUsers(server.uuid);
+            
+            // 获取每个群组的成员信息
+            const serverGroups = groups.value[server.uuid] || [];
+            for (const groupId of serverGroups) {
+                await getGroupMembers(server.uuid, groupId);
+            }
+        }
+
+        // 计算所有未绑定成员
+        await calculateAllUnboundMembers();
+    } catch (error) {
+        console.error("获取所有数据时出错:", error);
+        showToastMessage(`获取所有数据时出错: ${error.message}`, 'error');
     }
-
-    // 计算所有未绑定成员
-    await calculateAllUnboundMembers();
 };
 
 // 刷新数据
@@ -288,10 +279,10 @@ const refreshData = async () => {
     try {
         await getAllData();
         console.log('数据刷新成功');
-        showToastMessage('success', '数据刷新成功');
+        showToastMessage('数据刷新成功', 'success');
     } catch (error) {
         console.error(`数据刷新失败: ${error.message}`);
-        showToastMessage('error', `数据刷新失败: ${error.message}`);
+        showToastMessage(`数据刷新失败: ${error.message}`, 'error');
     }
 };
 
@@ -362,51 +353,29 @@ const showAddGroupModal = () => {
 const confirmAddGroup = async () => {
     if (!selectedServer.value) {
         console.error('请选择服务器');
-        showToastMessage('error', '请选择服务器');
+        showToastMessage('请选择服务器', 'error');
         return;
     }
     if (!newGroupId.value) {
         console.error('请输入QQ群号');
-        showToastMessage('error', '请输入QQ群号');
+        showToastMessage('请输入QQ群号', 'error');
         return;
     }
 
     try {
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: selectedServer.value,
-                action_name: '/api/v1/enable_groups/add',
-                params: {
-                    group_id: newGroupId.value
-                }
-            },
-        });
-
-        if (result.success) {
-            // 检查操作状态
-            if (result.response && result.response.status === 'success') {
-                // 添加成功，刷新数据
-                await refreshData();
-                // 关闭模态框
-                document.getElementById('addgroupmodal').close();
-                // 清空输入框
-                newGroupId.value = '';
-                console.log('QQ群添加成功');
-                showToastMessage('success', 'QQ群添加成功');
-            } else {
-                console.error(`添加QQ群失败: ${result.response?.message || result.msg}`);
-                showToastMessage('error', `添加QQ群失败: ${result.response?.message || result.msg}`);
-            }
-        } else {
-            console.error(`添加QQ群失败: ${result.msg}`);
-            showToastMessage('error', `添加QQ群失败: ${result.msg}`);
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        // 在实际应用中，这里会更新服务器的群组列表
+        // 为了简化，我们只显示成功消息
+        showToastMessage(`QQ群 ${newGroupId.value} 添加成功（模拟数据）`, 'success');
+        // 重新加载数据
+        await refreshData();
+        // 清空输入框
+        newGroupId.value = '';
     } catch (error) {
-        console.error(`添加QQ群时发生错误: ${error.message}`);
-        showToastMessage('error', `添加QQ群时发生错误: ${error.message}`);
+        showToastMessage(`QQ群添加失败: ${error.message}`, 'error');
     }
 };
 
@@ -432,44 +401,25 @@ const confirmDeleteGroup = async () => {
         const serverUuid = getServerUuidByGroup(currentDeleteGroup.value);
         if (!serverUuid) {
             console.error('无法找到群组所属的服务器');
-            showToastMessage('error', '无法找到群组所属的服务器');
+            showToastMessage('无法找到群组所属的服务器', 'error');
             return;
         }
 
         try {
-            const result = await $fetch('/api/servers', {
-                method: 'POST',
-                body: {
-                    action: 'do_action',
-                    token: token.value,
-                    uuid: serverUuid,
-                    action_name: '/api/v1/enable_groups/remove',
-                    params: {
-                        group_id: currentDeleteGroup.value
-                    }
-                },
-            });
-
-            if (result.success) {
-                // 检查操作状态
-                if (result.response && result.response.status === 'success') {
-                    // 删除成功，刷新数据
-                    await refreshData();
-                    // 关闭模态框
-                    document.getElementById('deletegroupconfirm').close();
-                    console.log('QQ群删除成功');
-                    showToastMessage('success', 'QQ群删除成功');
-                } else {
-                    console.error(`删除QQ群失败: ${result.response?.message || result.msg}`);
-                    showToastMessage('error', `删除QQ群失败: ${result.response?.message || result.msg}`);
-                }
-            } else {
-                console.error(`删除QQ群失败: ${result.msg}`);
-                showToastMessage('error', `删除QQ群失败: ${result.msg}`);
-            }
+            // 模拟API延迟
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // 使用模拟数据
+            // 在实际应用中，这里会从服务器的群组列表中移除该群组
+            // 为了简化，我们只显示成功消息
+            showToastMessage(`QQ群 ${currentDeleteGroup.value} 删除成功（模拟数据）`, 'success');
+            // 重新加载数据
+            await refreshData();
+            // 关闭模态框
+            document.getElementById('deletegroupconfirm').close();
         } catch (error) {
             console.error(`删除QQ群时发生错误: ${error.message}`);
-            showToastMessage('error', `删除QQ群时发生错误: ${error.message}`);
+            showToastMessage(`删除QQ群时发生错误: ${error.message}`, 'error');
         }
         return;
     }
@@ -477,44 +427,25 @@ const confirmDeleteGroup = async () => {
     // 使用新的删除方式
     if (!deleteSelectedServer.value || !deleteSelectedGroup.value) {
         console.error('请选择服务器和QQ群');
-        showToastMessage('error', '请选择服务器和QQ群');
+        showToastMessage('请选择服务器和QQ群', 'error');
         return;
     }
 
     try {
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: deleteSelectedServer.value,
-                action_name: '/api/v1/enable_groups/remove',
-                params: {
-                    group_id: deleteSelectedGroup.value
-                }
-            },
-        });
-
-        if (result.success) {
-            // 检查操作状态
-            if (result.response && result.response.status === 'success') {
-                // 删除成功，刷新数据
-                await refreshData();
-                // 关闭模态框
-                document.getElementById('deletegroupmodal').close();
-                console.log('QQ群删除成功');
-                showToastMessage('success', 'QQ群删除成功');
-            } else {
-                console.error(`删除QQ群失败: ${result.response?.message || result.msg}`);
-                showToastMessage('error', `删除QQ群失败: ${result.response?.message || result.msg}`);
-            }
-        } else {
-            console.error(`删除QQ群失败: ${result.msg}`);
-            showToastMessage('error', `删除QQ群失败: ${result.msg}`);
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        // 在实际应用中，这里会从服务器的群组列表中移除该群组
+        // 为了简化，我们只显示成功消息
+        showToastMessage(`QQ群 ${deleteSelectedGroup.value} 删除成功（模拟数据）`, 'success');
+        // 重新加载数据
+        await refreshData();
+        // 关闭模态框
+        document.getElementById('deletegroupmodal').close();
     } catch (error) {
         console.error(`删除QQ群时发生错误: ${error.message}`);
-        showToastMessage('error', `删除QQ群时发生错误: ${error.message}`);
+        showToastMessage(`删除QQ群时发生错误: ${error.message}`, 'error');
     }
 };
 

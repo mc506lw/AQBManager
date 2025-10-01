@@ -76,6 +76,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import { mockServers, mockConfig } from '~/utils/mockData';
 
 const token = useCookie('auth_token');
 const servers = ref([]);
@@ -115,19 +116,12 @@ const showToastMessage = (message, type) => {
 // 获取服务器列表
 const getservers = async () => {
     try {
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'get_servers',
-                token: token.value
-            },
-        });
-        if (result.success) {
-            servers.value = result.servers;
-            console.log('服务器列表获取成功');
-        } else {
-            showToastMessage(`服务器列表获取失败: ${result.msg}`, 'error');
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        servers.value = mockServers;
+        console.log('服务器列表获取成功（模拟数据）');
     } catch (error) {
         showToastMessage(`获取服务器列表时发生错误: ${error.message}`, 'error');
     }
@@ -146,27 +140,12 @@ const loadServerConfig = async () => {
     if (!selectedServer.value) return;
 
     try {
-        // 获取完整配置
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: selectedServer.value,
-                action_name: '/api/v1/config/get',
-                params: {
-                    key: ''
-                }
-            },
-        });
-
-        if (result.success) {
-            // 解析配置并构建界面
-            parseConfig(result.response.value);
-            showToastMessage('配置加载成功', 'success');
-        } else {
-            showToastMessage(`配置加载失败: ${result.msg}`, 'error');
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        parseConfig(mockConfig);
+        showToastMessage('配置加载成功（模拟数据）', 'success');
     } catch (error) {
         showToastMessage(`加载配置时发生错误: ${error.message}`, 'error');
     }
@@ -798,74 +777,49 @@ const saveConfigItem = async (key, value) => {
     if (!selectedServer.value) return;
 
     try {
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: selectedServer.value,
-                action_name: '/api/v1/config/set',
-                params: {
-                    key: key,
-                    value: value
-                }
-            },
-        });
-
-        if (result.success && result.response.status === 'success') {
-            showToastMessage(`配置项 ${key} 保存成功`, 'success');
-        } else {
-            showToastMessage(`配置项保存失败: ${result.response?.message || result.msg}`, 'error');
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据保存配置项
+        // 在实际应用中，这里会更新mockConfig对象
+        // 为了简化，我们只显示成功消息
+        showToastMessage(`配置项 ${key} 保存成功（模拟数据）`, 'success');
     } catch (error) {
         showToastMessage(`保存配置项时发生错误: ${error.message}`, 'error');
     }
 };
 
-// 保存全部配置
+// 保存所有配置
 const saveAllConfig = async () => {
     if (!selectedServer.value) return;
 
     try {
-        // 显示保存中提示
-        showToastMessage('正在保存全部配置...', 'info');
-
-        // 遍历所有配置项并保存
-        const savePromises = configItems.value.map(item =>
-            saveConfigItem(item.key, item.value)
-        );
-
-        // 等待所有保存操作完成
-        await Promise.all(savePromises);
-
-        // 显示成功提示
-        showToastMessage('全部配置保存成功', 'success');
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据保存所有配置
+        // 在实际应用中，这里会更新mockConfig对象
+        // 为了简化，我们只显示成功消息
+        configVersion.value++; // 增加版本号触发重新加载
+        showToastMessage('所有配置保存成功（模拟数据）', 'success');
     } catch (error) {
-        showToastMessage(`保存全部配置时发生错误: ${error.message}`, 'error');
+        showToastMessage(`保存配置时发生错误: ${error.message}`, 'error');
     }
 };
 
-// 恢复所有默认配置
+// 恢复所有配置为默认值
 const resetAllConfig = async () => {
     if (!selectedServer.value) return;
 
     try {
-        // 显示恢复中提示
-        showToastMessage('正在恢复默认配置...', 'info');
-
-        // 遍历所有配置项并恢复默认值
-        const resetPromises = configItems.value.map(item =>
-            resetConfigItem(item.key)
-        );
-
-        // 等待所有恢复操作完成
-        await Promise.all(resetPromises);
-
-        // 重新加载配置
-        await loadServerConfig();
-
-        // 显示成功提示
-        showToastMessage('已恢复默认配置', 'success');
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据恢复默认配置
+        // 在实际应用中，这里会重置mockConfig对象为默认值
+        // 为了简化，我们只显示成功消息
+        configVersion.value++; // 增加版本号触发重新加载
+        showToastMessage('所有配置已恢复为默认值（模拟数据）', 'success');
     } catch (error) {
         showToastMessage(`恢复默认配置时发生错误: ${error.message}`, 'error');
     }
@@ -876,27 +830,15 @@ const resetConfigItem = async (key) => {
     if (!selectedServer.value) return;
 
     try {
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: selectedServer.value,
-                action_name: '/api/v1/config/set',
-                params: {
-                    key: key,
-                    value: null  // 传入null表示恢复默认值
-                }
-            },
-        });
-
-        if (result.success && result.response.status === 'success') {
-            showToastMessage(`配置项 ${key} 已恢复默认值`, 'success');
-            // 重新加载配置以显示默认值
-            await loadServerConfig();
-        } else {
-            showToastMessage(`配置项 ${key} 恢复默认值失败: ${result.response?.message || result.msg}`, 'error');
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据恢复单个配置项
+        // 在实际应用中，这里会重置mockConfig中对应项为默认值
+        // 为了简化，我们只显示成功消息
+        showToastMessage(`配置项 ${key} 已恢复默认值（模拟数据）`, 'success');
+        // 重新加载配置以显示默认值
+        await loadServerConfig();
     } catch (error) {
         showToastMessage(`恢复配置项 ${key} 默认值时发生错误: ${error.message}`, 'error');
     }

@@ -155,13 +155,14 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useCustomStore } from '~/utils/custom'
 import Chart from 'chart.js/auto'
+import { mockSystemInfo, mockServers, mockServerStatus, mockRequestCount } from '~/utils/mockData'
 
 // 获取token
 const token = useCookie('auth_token').value
 
 // 数据状态
-const systemInfo = ref({})
-const serverStats = ref({ total: 0, connected: 0 })
+const systemInfo = ref({...mockSystemInfo})
+const serverStats = ref({ total: mockServers.length, connected: 0 })
 const serverList = ref({})
 
 // 图表引用
@@ -382,19 +383,19 @@ const updateChartData = () => {
 // 获取系统信息
 const fetchSystemInfo = async () => {
     try {
-        const result = await $fetch('/api/node', {
-            method: 'POST',
-            body: {
-                action: 'get_inform',
-                token: token
-            }
-        })
+        // 使用模拟数据替代真实API调用
+        await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
+        
+        // 使用模拟数据
+        const result = {
+            ...mockSystemInfo,
+            requestCount: mockRequestCount,
+            panelTime: new Date().toLocaleString()
+        }
 
         if (result) {
             systemInfo.value = result
             console.log('系统信息:', result)
-            // 更新面板时间
-            systemInfo.value.panelTime = new Date().toLocaleString()
         }
     } catch (error) {
         console.error('获取系统信息失败:', error)
@@ -404,14 +405,14 @@ const fetchSystemInfo = async () => {
 // 获取服务器信息
 const fetchServerInfo = async () => {
     try {
-        // 获取服务器总数
-        const serversResult = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'get_servers',
-                token: token
-            }
-        })
+        // 使用模拟数据替代真实API调用
+        await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
+        
+        // 使用模拟数据
+        const serversResult = {
+            success: true,
+            servers: mockServers
+        }
 
         if (serversResult.success) {
             serverStats.value.total = serversResult.servers.length
@@ -425,14 +426,11 @@ const fetchServerInfo = async () => {
             })
         }
 
-        // 获取已连接服务器数
-        const statusResult = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'get_all_status',
-                token: token
-            }
-        })
+        // 使用模拟数据
+        const statusResult = {
+            success: true,
+            allStatus: mockServerStatus
+        }
 
         if (statusResult.success) {
             const connectedServers = Object.values(statusResult.allStatus).filter(status => status.success).length

@@ -91,40 +91,30 @@ const handleChange = async () => {
   try {
     loading.value = true
     
-    // 首次设置时，先使用默认用户名和密码登录获取token
-    const loginResult = await $fetch('/api/auth', {
-      method: 'POST',
-      body: {
-        action: 'login',
-        name: 'admin',
-        password: '123456',
-      },
-    })
+    // 模拟API调用延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // 模拟登录成功
+    const loginResult = {
+      success: true,
+      token: 'mock-token-' + Math.random().toString(36).substr(2, 9)
+    };
     
     if (loginResult.success === true) {
-      // 登录成功，使用返回的token修改密码
-      const result = await $fetch('/api/auth', {
-        method: 'POST',
-        body: {
-          action: 'change',
-          token: loginResult.token,
-          name: newUsername.value,
-          password: newPassword.value,
-        },
-      })
+      // 模拟修改密码成功
+      const result = {
+        success: true,
+        msg: '密码修改成功'
+      };
       
       if (result.success === true) {
         success.value = '设置成功，正在登录...'
         
-        // 使用新凭据自动登录
-        const newLoginResult = await $fetch('/api/auth', {
-          method: 'POST',
-          body: {
-            action: 'login',
-            name: newUsername.value,
-            password: newPassword.value,
-          },
-        })
+        // 模拟新凭据登录成功
+        const newLoginResult = {
+          success: true,
+          token: 'new-mock-token-' + Math.random().toString(36).substr(2, 9)
+        };
         
         if (newLoginResult.success === true) {
           // 保存token到cookie
@@ -135,35 +125,31 @@ const handleChange = async () => {
           })
           tokenCookie.value = newLoginResult.token
           
-          // 检查服务器列表
-          try {
-            const serversResponse = await $fetch('/api/servers', {
-              method: 'POST',
-              body: {
-                action: 'get_servers',
-                token: newLoginResult.token
-              }
-            })
-            
-            // 如果服务器列表为空，跳转到设置页面
-            if (serversResponse.success && (!serversResponse.servers || serversResponse.servers.length === 0)) {
-              navigateTo('/setup')
-            } else {
-              // 否则跳转到主页
-              navigateTo('/')
-            }
-          } catch (err) {
-            // 如果检查服务器失败，默认跳转到设置页面
-            navigateTo('/setup')
+          // 模拟检查服务器列表
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // 模拟服务器响应
+          const serversResponse = {
+            success: true,
+            servers: [] // 模拟空服务器列表，会跳转到设置页面
+          };
+          
+          // 如果服务器列表为空，跳转到设置页面
+          if (serversResponse.success && (!serversResponse.servers || serversResponse.servers.length === 0)) {
+            // 注意：setup页面已被删除，这里跳转到服务器管理页面
+            navigateTo('/servers')
+          } else {
+            // 否则跳转到主页
+            navigateTo('/')
           }
         } else {
-          error.value = newLoginResult.msg
+          error.value = '登录失败'
         }
       } else {
-        error.value = result.msg
+        error.value = result.msg || '密码修改失败'
       }
     } else {
-      error.value = loginResult.msg
+      error.value = '初始登录失败'
     }
   } catch (err) {
     error.value = err.message || '设置过程中发生错误'

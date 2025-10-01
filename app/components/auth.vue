@@ -3,10 +3,10 @@
         <div v-if="isOpen" ref="authCard"
             class="card w-96 bg-base-100 card-sm shadow-sm absolute transition-all duration-300 ease-in-out bottom-14 left-2">
             <div class="card-body">
-                <h2 class="card-title">ID: {{ admininfom.name }}</h2>
-                <h2 class="card-title">上次登录: {{ formatTime(admininfom.lastlogin) }}</h2>
-                <h2 class="card-title">上次更新: {{ formatTime(admininfom.updatetime) }}</h2>
-                <h2 class="card-title">创建时间: {{ formatTime(admininfom.createtime) }}</h2>
+                <h2 class="card-title">ID: {{ admininfom.username }}</h2>
+                <h2 class="card-title">上次登录: {{ formatTime(admininfom.last_login) }}</h2>
+                <h2 class="card-title">上次更新: {{ formatTime(admininfom.updated_at) }}</h2>
+                <h2 class="card-title">创建时间: {{ formatTime(admininfom.created_at) }}</h2>
                 <div class="justify-end card-actions">
                     <button class="btn" onclick="my_modal_1.showModal()">更改用户名/密码</button>
                     <dialog id="my_modal_1" class="modal">
@@ -63,6 +63,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useCustomStore } from '~/utils/custom'
+import { mockAdminInfo } from '~/utils/mockData'
 
 const customStore = useCustomStore()
 const admininfom = ref({})
@@ -102,19 +103,14 @@ const formatTime = (time) => {
 const fetchadmininfom = async () => {
     try {
         loading.value = true;
-        const result = await $fetch('/api/auth', {
-            method: 'POST',
-            body: {
-                action: 'get_inform',
-                token: useCookie('auth_token').value,
-            },
-        });
-        if (result.success === true) {
-            admininfom.value = result.data
-            newName.value = result.data.name
-        } else {
-            console.log('获取管理员信息失败', result)
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        admininfom.value = mockAdminInfo;
+        newName.value = mockAdminInfo.username;
+        
+        console.log('获取管理员信息成功（模拟数据）');
     } catch (err) {
         console.log('获取管理员信息出错', err)
     } finally {
@@ -125,27 +121,25 @@ const fetchadmininfom = async () => {
 const changeadmin = async () => {
     try {
         loading.value = true;
-        const result = await $fetch('/api/auth', {
-            method: 'POST',
-            body: {
-                action: 'change',
-                token: useCookie('auth_token').value,
-                name: newName.value,
-                password: newPassword.value,
-            },
-        });
-        if (result.success === true) {
-            admininfom.value = result.data
-            newPassword.value = ''
-            newName.value = result.data.name
-            errorMsg.value = ''
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据验证
+        if (newName.value && newPassword.value && newPassword.value.length >= 4) {
+            // 更新模拟数据
+            mockAdminInfo.username = newName.value;
+            admininfom.value = {...mockAdminInfo};
+            newPassword.value = '';
+            newName.value = mockAdminInfo.username;
+            errorMsg.value = '';
+            console.log('更改管理员信息成功（模拟数据）');
         } else {
-            errorMsg.value = result.msg
-            console.log('更改管理员信息失败', result)
+            errorMsg.value = '用户名或密码不符合要求';
+            console.log('更改管理员信息失败（模拟数据）');
         }
     } catch (err) {
-        errorMsg.value = '更改失败'
-        console.log('更改管理员信息出错', err)
+        errorMsg.value = '更改失败';
+        console.log('更改管理员信息出错', err);
     } finally {
         loading.value = false;
     }
@@ -154,6 +148,7 @@ const changeadmin = async () => {
 const logout = () => {
     useCookie('auth_token').value = null
     closeModal()
+    // 使用模拟数据时，仍然导航到登录页
     navigateTo('/login')
 }
 

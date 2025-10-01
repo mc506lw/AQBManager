@@ -207,18 +207,12 @@ function closeMobileDrawer() {
 const admininfom = async () => {
     try {
         loading.value = true;
-        const result = await $fetch('/api/auth', {
-            method: 'POST',
-            body: {
-                action: 'get_inform',
-                token: useCookie('auth_token').value,
-            },
-        });
-        if (result.success === true) {
-            adminname.value = result.data.name
-        } else {
-            console.log('获取管理员信息失败', result)
-        }
+        // 模拟网络延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        adminname.value = '管理员'
+        console.log('使用模拟管理员信息')
     } catch (err) {
         console.log('获取管理员信息出错', err)
     } finally {

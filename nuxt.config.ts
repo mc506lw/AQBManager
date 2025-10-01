@@ -1,12 +1,12 @@
 import tailwindcss from "@tailwindcss/vite"
-import { initializeAllServerConnections, shutdownServerConnections } from './server/utils/serversmanager'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   css: ['~/main.css'],
-  ssr: true,
+  ssr: false,
+  target: 'static',
   vite: {
     plugins: [tailwindcss()]
   },
@@ -30,15 +30,10 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
   ],
-  hooks: {
-    'nitro:init': async (nitro) => {
-      await initializeAllServerConnections();
-    },
-    'close': async () => {
-      await shutdownServerConnections();
-    }
-  },
   ignore: [
     'server/data'
-  ]
+  ],
+  generate: {
+    fallback: '404.html'
+  }
 })

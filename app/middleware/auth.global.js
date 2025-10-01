@@ -1,4 +1,6 @@
 // middleware/auth.global.js
+import { mockIsFirst, mockServers } from '~/utils/mockData'
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // 公开页面（不需要登录）
   const publicPages = ['/login', '/api/test']
@@ -14,7 +16,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   
   // 检查是否是第一次使用（无论是否有token）
   try {
-    const isFirstResponse = await $fetch('/api/is_first')
+    // 使用模拟数据替代真实API调用
+    const isFirstResponse = { is_first: mockIsFirst }
     if (isFirstResponse.is_first) {
       // 是第一次使用 → 跳转到首次设置页面
       // 只有在当前页面不是/first时才重定向，防止无限循环
@@ -31,33 +34,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (tokenValue) {
     try {
       // 不是第一次使用，检查服务器列表
-      // 添加重试机制以防止在添加服务器后立即检查时出现空列表
-      let serversResponse = null
-      let retryCount = 0
-      const maxRetries = 3
-      
-      while (retryCount <= maxRetries) {
-        serversResponse = await $fetch('/api/servers', {
-          method: 'POST',
-          body: {
-            action: 'get_servers',
-            token: tokenValue
-          }
-        })
-        
-        // 如果成功获取到服务器列表且不为空，跳出循环
-        if (serversResponse.success && serversResponse.servers && serversResponse.servers.length > 0) {
-          break
-        }
-        
-        // 如果是最后一次重试，跳出循环
-        if (retryCount === maxRetries) {
-          break
-        }
-        
-        // 等待一段时间再重试
-        await new Promise(resolve => setTimeout(resolve, 500))
-        retryCount++
+      // 使用模拟数据替代真实API调用
+      const serversResponse = {
+        success: true,
+        servers: mockServers
       }
       
       // 如果服务器列表为空且当前页面不是/setup或/servers，则重定向到/setup

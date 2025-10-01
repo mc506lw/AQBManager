@@ -1,6 +1,7 @@
 <script setup>
 import Navbar from './components/navbar.vue';
 import Sidebar from './components/sidebar.vue';
+import Announcement from './components/announcement.vue';
 import { useCustomStore } from '~/utils/custom';
 
 const customStore = useCustomStore();
@@ -52,5 +53,6 @@ useHead({
       <Navbar />
       <NuxtPage />
     </div>
+    <Announcement />
   </div>
 </template>

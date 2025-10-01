@@ -33,6 +33,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { mockServers, mockCommandResult } from '~/utils/mockData';
 
 const token = useCookie('auth_token');
 const servers = ref([]);
@@ -43,20 +44,17 @@ const commandLogs = ref([]);
 
 // 获取服务器列表
 const getservers = async () => {
-    const result = await $fetch('/api/servers', {
-        method: 'POST',
-        body: {
-            action: 'get_servers',
-            token: token.value
-        },
-    });
-    if (result.success) {
-        servers.value = result.servers;
-        console.log('服务器列表获取成功');
-        addLog('info', `服务器列表获取成功`);
-    } else {
-        console.error(`服务器列表获取失败: ${result.msg}`);
-        addLog('error', `服务器列表获取失败: ${result.msg}`);
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        servers.value = mockServers;
+        console.log('服务器列表获取成功（模拟数据）');
+        addLog('info', `服务器列表获取成功（模拟数据）`);
+    } catch (error) {
+        console.error(`服务器列表获取失败: ${error.message}`);
+        addLog('error', `服务器列表获取失败: ${error.message}`);
     }
 };
 
@@ -110,24 +108,24 @@ const executeCommand = async () => {
     try {
         addLog('info', `[执行命令]: ${commandInput.value}`);
 
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: selectedServer.value,
-                action_name: '/api/v1/command/execute',
-                params: {
-                    command: commandInput.value
-                }
-            },
-        });
-
-        if (result.success) {
-            addLog('info', `[命令返回]: ${result.response.result}`);
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        const result = mockCommandResult;
+        
+        // 模拟不同的命令响应
+        if (commandInput.value.toLowerCase().includes('help')) {
+            result.response.result = '可用命令: help, list, status, stop, start';
+        } else if (commandInput.value.toLowerCase().includes('list')) {
+            result.response.result = '玩家列表: Steve, Alex, Herobrine';
+        } else if (commandInput.value.toLowerCase().includes('status')) {
+            result.response.result = '服务器状态: 运行中 (12/20 players)';
         } else {
-            addLog('error', `命令执行失败: ${result.msg}`);
+            result.response.result = `命令 "${commandInput.value}" 执行成功（模拟响应）`;
         }
+        
+        addLog('info', `[命令返回]: ${result.response.result}`);
     } catch (error) {
         addLog('error', `命令执行时发生错误: ${error.message}`);
     }

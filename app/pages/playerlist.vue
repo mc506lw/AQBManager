@@ -169,6 +169,17 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { mockPlayerList } from '~/utils/mockData';
+
+const token = useCookie('auth_token');
+const playerlists = ref([]);
+const servers = ref([]);
+
+// 根据服务器名称获取UUID
+const getServersUuidByName = (serverName) => {
+    const server = servers.value.find(s => s.name === serverName || s.uuid === serverName);
+    return server ? server.uuid : null;
+};
 
 const items = ref([]);
 const searchInput = ref('');
@@ -297,201 +308,75 @@ const performSearch = () => {
     currentPage.value = 1;
 };
 
+// 刷新数据
 const refreshData = async () => {
-    // 重新获取服务器列表
-    await getservers();
-    // 重新获取玩家列表
-    await getplayerlists();
-    showToastMessage('数据已刷新', 'success');
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据
+        items.value = mockPlayerList;
+        console.log('玩家列表数据刷新成功（模拟数据）');
+        showToastMessage('玩家列表数据刷新成功（模拟数据）', 'success');
+    } catch (error) {
+        console.error('刷新玩家列表数据时发生错误:', error);
+        showToastMessage(`刷新玩家列表数据时发生错误: ${error.message}`, 'error');
+    }
 };
 
 onMounted(async () => {
     await getservers()
     await getplayerlists()
-
 });
 
-const token = useCookie('auth_token');
-const playerlists = ref([])
-const servers = ref([])
-
 const getservers = async () => {
-    const result = await $fetch('/api/servers', {
-        method: 'POST',
-        body: {
-            action: 'get_servers',
-            token: token.value
-        },
-    })
-    if (result.success) {
-        servers.value = result.servers
-        console.log('服务器列表获取成功');
-    } else {
-        showToastMessage(`服务器列表获取失败: ${result.msg}`, 'error');
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        servers.value = [
+            { uuid: 'server-uuid-1', name: '生存服务器' },
+            { uuid: 'server-uuid-2', name: '创造服务器' },
+            { uuid: 'server-uuid-3', name: '冒险服务器' }
+        ];
+        console.log('服务器列表获取成功（模拟数据）');
+    } catch (error) {
+        showToastMessage(`服务器列表获取失败: ${error.message}`, 'error');
     }
-}
+};
 
 const getplayerlists = async () => {
-    // 清空之前的玩家列表
-    playerlists.value = [];
-    items.value = [];
-
-    // 创建一个映射来跟踪已添加的玩家
-    const addedPlayers = new Map();
-
-    // 遍历所有服务器
-    for (const server of servers.value) {
-        try {
-            const userResult = await $fetch('/api/servers', {
-                method: 'POST',
-                body: {
-                    action: 'do_action',
-                    token: token.value,
-                    uuid: server.uuid,  // 使用服务器对象的uuid属性
-                    action_name: '/api/v1/users'
-                },
-            });
-            if (userResult.success && userResult.response) {
-                console.log(`获取到玩家: ${userResult.msg}`);
-                try {
-                    // 获取在线玩家列表
-                    const onlinePlayersResult = await $fetch('/api/servers', {
-                        method: 'POST',
-                        body: {
-                            action: 'do_action',
-                            token: token.value,
-                            uuid: server.uuid,  // 使用服务器对象的uuid属性
-                            action_name: '/api/v1/server/players'
-                        },
-                    });
-
-                    // 处理在线玩家数据
-                    let onlinePlayers = [];
-                    if (onlinePlayersResult.success && onlinePlayersResult.response && onlinePlayersResult.response.players && Array.isArray(onlinePlayersResult.response.players)) {
-                        onlinePlayers = onlinePlayersResult.response.players;
-                    }
-
-                    const groupResult = await $fetch('/api/servers', {
-                        method: 'POST',
-                        body: {
-                            action: 'do_action',
-                            token: token.value,
-                            uuid: server.uuid,  // 使用服务器对象的uuid属性
-                            action_name: '/api/v1/enable_groups'
-                        },
-                    });
-                    if (groupResult.success && groupResult.response && Array.isArray(groupResult.response.groups)) {
-                        // 创建一个映射来跟踪每个QQ号出现在哪些群组中
-                        const qqGroupsMap = new Map();
-                        
-                        // 遍历群组列表，收集每个QQ号的群组信息
-                        for (const group of groupResult.response.groups) {
-                            try {
-                                // 获取在群组的QQ列表
-                                const qqListResult = await $fetch('/api/servers', {
-                                    method: 'POST',
-                                    body: {
-                                        action: 'do_action',
-                                        token: token.value,
-                                        uuid: server.uuid,  // 使用服务器对象的uuid属性
-                                        action_name: '/api/v1/enable_groups/users',
-                                        params: { group_id: group }
-
-                                    },
-                                });
-                                console.log(`获取到群组: ${qqListResult.msg}`);
-
-                                // 处理数据
-                                if (qqListResult.success && qqListResult.response) {
-                                    // 处理群组数据
-                                    const groupUsers = qqListResult.response;
-                                    
-                                    // 遍历群组成员
-                                    for (const [qq, name] of Object.entries(groupUsers)) {
-                                        // 如果QQ号还没有记录，初始化一个空数组
-                                        if (!qqGroupsMap.has(qq)) {
-                                            qqGroupsMap.set(qq, []);
-                                        }
-                                        // 将当前群组ID添加到该QQ号的群组列表中
-                                        qqGroupsMap.get(qq).push(group);
-                                    }
-                                }
-                            } catch (error) {
-                                showToastMessage(`获取群组QQ列表失败: ${error.message}`, 'error');
-                            }
-                        }
-                        
-                        // 处理玩家数据
-                        const players = userResult.response;
-                        
-                        // 遍历玩家数据
-                        for (const [qq, playerNames] of Object.entries(players)) {
-                            // 确保playerNames是数组
-                            const names = Array.isArray(playerNames) ? playerNames : [playerNames];
-                            // 遍历玩家名
-                            for (const playerName of names) {
-                                // 创建唯一标识符
-                                const playerKey = `${server.uuid}-${qq}-${playerName}`;
-                                
-                                // 检查玩家是否已经添加过
-                                if (!addedPlayers.has(playerKey)) {
-                                    // 检查玩家是否在线
-                                    const isOnline = onlinePlayers.includes(playerName);
-
-                                    // 获取该QQ号所在的群组列表
-                                    const qqGroups = qqGroupsMap.get(qq) || [];
-
-                                    // 创建展示项，将群组列表合并显示
-                                    const item = {
-                                        id: playerName,
-                                        qq: qq,
-                                        server: server.name || server.uuid,
-                                        qq_group: qqGroups.join(', '), // 以逗号分隔的群组列表
-                                        online: isOnline // 添加在线状态
-                                    };
-
-                                    // 添加到展示列表
-                                    items.value.push(item);
-                                    
-                                    // 标记玩家已添加
-                                    addedPlayers.set(playerKey, true);
-                                }
-                            }
-                        }
-                    } else {
-                        showToastMessage(`获取群组失败: ${groupResult.msg}`, 'warning');
-                    }
-                } catch (error) {
-                    showToastMessage(`获取服务器 ${server.uuid} 群组失败: ${error.message}`, 'error');
-                }
-            } else {
-                showToastMessage(`获取玩家失败: ${userResult.msg}`, 'warning');
-            }
-        } catch (error) {
-            console.error(`服务器 ${server.uuid} 操作失败:`, error);
-        }
+    try {
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        items.value = mockPlayerList;
+        console.log('玩家列表获取成功（模拟数据）');
+    } catch (error) {
+        console.error('获取玩家列表时发生错误:', error);
+        showToastMessage(`获取玩家列表时发生错误: ${error.message}`, 'error');
     }
 };
 
 // 获取玩家详细信息
 const getPlayerDetails = async (playerId, serverUuid) => {
     try {
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: serverUuid,
-                action_name: '/api/v1/server/player',
-                params: { player: playerId }
-            },
-        });
-        if (result.success && result.response) {
-            return result.response;
-        } else {
-            showToastMessage(`获取玩家详细信息失败: ${result.msg}`, 'error');
-            return null;
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 使用模拟数据
+        const mockDetails = {
+            name: playerId,
+            health: 20,
+            food: 20,
+            gamemode: 'survival',
+            location: { x: 0, y: 64, z: 0 },
+            inventory: []
+        };
+        console.log('玩家详细信息获取成功（模拟数据）');
+        return mockDetails;
     } catch (error) {
         showToastMessage(`获取玩家详细信息时发生错误: ${error.message}`, 'error');
         return null;
@@ -519,49 +404,26 @@ const confirmDelete = async () => {
     if (!currentDeletePlayer.value) return;
 
     try {
-        const serverUuid = getServersUuidByName(currentDeletePlayer.value.server);
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: serverUuid,
-                action_name: '/api/v1/users/unbind',
-                params: {
-                    qq: currentDeletePlayer.value.qq,
-                    player: currentDeletePlayer.value.id
-                }
-            },
-        });
-
-        if (result.success && result.response) {
-            if (result.response.status === 'success') {
-                // 删除成功，从列表中移除该玩家
-                const index = items.value.findIndex(item =>
-                    item.id === currentDeletePlayer.value.id &&
-                    item.qq === currentDeletePlayer.value.qq
-                );
-                if (index !== -1) {
-                    items.value.splice(index, 1);
-                }
-                // 关闭模态框
-                document.getElementById('deleteconfirm').close();
-                showToastMessage('玩家删除成功', 'success');
-            } else {
-                showToastMessage(`删除玩家失败: ${result.response.message}`, 'error');
-            }
-        } else {
-            showToastMessage(`删除玩家失败: ${result.msg}`, 'error');
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据 - 实际项目中这里会调用API删除玩家
+        console.log(`删除玩家: QQ=${currentDeletePlayer.value.qq}, ID=${currentDeletePlayer.value.id}`);
+        
+        // 删除成功，从列表中移除该玩家
+        const index = items.value.findIndex(item =>
+            item.id === currentDeletePlayer.value.id &&
+            item.qq === currentDeletePlayer.value.qq
+        );
+        if (index !== -1) {
+            items.value.splice(index, 1);
         }
+        // 关闭模态框
+        document.getElementById('deleteconfirm').close();
+        showToastMessage('玩家删除成功（模拟数据）', 'success');
     } catch (error) {
         showToastMessage(`删除玩家时发生错误: ${error.message}`, 'error');
     }
-};
-
-// 根据服务器名称获取UUID
-const getServersUuidByName = (serverName) => {
-    const server = servers.value.find(s => s.name === serverName || s.uuid === serverName);
-    return server ? server.uuid : null;
 };
 
 // 确认添加玩家
@@ -581,37 +443,20 @@ const confirmAdd = async () => {
     }
 
     try {
-        const serverUuid = getServersUuidByName(selectedServer.value);
-        const result = await $fetch('/api/servers', {
-            method: 'POST',
-            body: {
-                action: 'do_action',
-                token: token.value,
-                uuid: serverUuid,
-                action_name: '/api/v1/users/bind',
-                params: {
-                    qq: newplayerqq.value,
-                    player: newplayerid.value
-                }
-            },
-        });
-
-        if (result.success && result.response) {
-            if (result.response.status === 'success') {
-                // 添加成功，刷新数据
-                await refreshData();
-                // 关闭模态框
-                document.getElementById('addplayermodal').close();
-                // 清空输入框
-                newplayerqq.value = '';
-                newplayerid.value = '';
-                showToastMessage('玩家添加成功', 'success');
-            } else {
-                showToastMessage(`添加玩家失败: ${result.response.message}`, 'error');
-            }
-        } else {
-            showToastMessage(`添加玩家失败: ${result.msg}`, 'error');
-        }
+        // 模拟API延迟
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 使用模拟数据 - 实际项目中这里会调用API添加玩家
+        console.log(`添加玩家: QQ=${newplayerqq.value}, ID=${newplayerid.value}`);
+        showToastMessage('玩家添加成功（模拟数据）', 'success');
+        
+        // 添加成功，刷新数据
+        await refreshData();
+        // 关闭模态框
+        document.getElementById('addplayermodal').close();
+        // 清空输入框
+        newplayerqq.value = '';
+        newplayerid.value = '';
     } catch (error) {
         showToastMessage(`添加玩家时发生错误: ${error.message}`, 'error');
     }
